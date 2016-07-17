@@ -106,9 +106,11 @@ public class CooperateClosure{
     }
 
     private void generateTree(PointerTargetTreeNode rootNode, Integer depth){
+        if (depth.equals(0))
+            return;
 
         for (Word word : rootNode.getSynset().getWords()){
-            PointWord pointWord = new PointWord(word.getLemma(), 1);
+            PointWord pointWord = new PointWord(word.getLemma(), DEPTH - depth + 1);
             if (alreadyExist(pointWord))
                 continue;
             else
@@ -117,7 +119,7 @@ public class CooperateClosure{
 
         List<PointerTargetTreeNode> childNodeList = rootNode.getChildTreeList();
         for (PointerTargetTreeNode childNode : childNodeList){
-
+            generateTree(childNode, depth - 1);
         }
 
 
