@@ -19,11 +19,9 @@ import java.util.List;
 /**
  * wbcao:合作指示词闭包
  */
-public class CooperateClosure{
-    //查找子树的深度
-    private static final int DEPTH = 3;
+public class CooperateClosure extends PointWordClosure{
+    private static CooperateClosure instance;
 
-    private final Dictionary dictionary;
     private IndexWord COOPERATE;
     private IndexWord ALLY;
     private IndexWord COLLABORATE;
@@ -35,18 +33,18 @@ public class CooperateClosure{
     private IndexWord PARTNERSHIP;
     private IndexWord AGREE;
 
-    private List<IndexWord> indexWordList;
-    private List<PointWord> pointWordList;
-    private List<PointerTargetTree> pointerTargetTreeList;
+    public static synchronized CooperateClosure getInstance() throws JWNLException{
+        if (instance == null)
+            instance = new CooperateClosure();
+        return instance;
+    }
 
-
-    public CooperateClosure() throws JWNLException{
-        this.dictionary = Dictionary.getDefaultResourceInstance();
+    private CooperateClosure() throws JWNLException{
 
         COOPERATE = dictionary.lookupIndexWord(POS.VERB, "cooperate");
         ALLY = dictionary.lookupIndexWord(POS.VERB, "ally");
         COLLABORATE = dictionary.lookupIndexWord(POS.VERB, "collaborate");
-        JOINT = dictionary.lookupIndexWord(POS.ADJECTIVE, "joint");
+        JOINT = dictionary.lookupIndexWord(POS.VERB, "joint");
         OWN = dictionary.lookupIndexWord(POS.VERB, "own");
         PARTNER = dictionary.lookupIndexWord(POS.NOUN, "partner");
         COORDINATE = dictionary.lookupIndexWord(POS.VERB, "coordinate");
@@ -69,95 +67,6 @@ public class CooperateClosure{
         build();
 
     }
-
-    private void build() throws JWNLException{
-        this.pointWordList = new ArrayList<PointWord>();
-
-        this.pointerTargetTreeList = new ArrayList<PointerTargetTree>();
-        for (IndexWord indexWord : indexWordList){
-            PointWord pointWord = new PointWord(indexWord.getLemma(), 0);
-            pointWordList.add(pointWord);
-
-            PointerTargetTree tree = PointerUtils.getHyponymTree(indexWord.getSenses().get(0));
-            PointerTargetTreeNode rootNode = tree.getRootNode();
-            Integer depth = Integer.valueOf(DEPTH);
-            generateTree(rootNode, depth);
-
-            pointerTargetTreeList.add(tree);
-        }
-
-//        for (IndexWord indexWord : indexWordList){
-//            PointWord pointWord = new PointWord(indexWord.getLemma(), 0);
-//            pointWordList.add(pointWord);
-//        }
-    }
-
-    public void printAllTrees() throws JWNLException{
-        for (PointerTargetTree pointerTargetTree : pointerTargetTreeList){
-            System.out.println("------------------------");
-            pointerTargetTree.print();
-        }
-
-
-    }
-
-    public void printWordList(){
-
-        for (PointWord pointWord : pointWordList){
-            pointWord.print();
-        }
-    }
-
-//    public void buildClosure(){
-//        for (PointerTargetTree pointerTargetTree : pointerTargetTreeList){
-////            PointerTargetNode rootNode = pointerTargetTree.getRootNode();
-////            System.out.println(rootNode.getSynset());
-//            PointerTargetTreeNode rootNode = pointerTargetTree.getRootNode();
-//
-//            Integer depth = Integer.valueOf(DEPTH);
-//            generateTree(rootNode, depth);
-//        }
-//
-//        for (PointWord pointWord : pointWordList){
-//            pointWord.print();
-//        }
-//    }
-
-    private void generateTree(PointerTargetTreeNode rootNode, Integer depth){
-        if (depth.equals(0))
-            return;
-
-        for (Word word : rootNode.getSynset().getWords()){
-            PointWord pointWord = new PointWord(word.getLemma(), DEPTH - depth + 1);
-            if (alreadyExist(pointWord))
-                continue;
-            else
-                pointWordList.add(pointWord);
-        }
-
-        List<PointerTargetTreeNode> childNodeList = rootNode.getChildTreeList();
-        for (PointerTargetTreeNode childNode : childNodeList){
-            generateTree(childNode, depth - 1);
-        }
-
-
-    }
-
-    /**
-     * wbcao:检测要添加的指示词是否已存在于集合中
-     * @param pointWord
-     * @return
-     */
-    private boolean alreadyExist(PointWord pointWord){
-        for (PointWord pointWordInList : pointWordList){
-            if (pointWord.getLemma().equals(pointWordInList.getLemma()))
-                return true;
-        }
-        return false;
-
-    }
-
-
 
 
 }

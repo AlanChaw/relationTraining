@@ -1,5 +1,6 @@
 package Controller;
 
+import PointerWord.CompeteClosure;
 import PointerWord.CooperateClosure;
 import net.sf.extjwnl.JWNLException;
 
@@ -10,10 +11,9 @@ public class MainController {
 
     public static void main(String[] args) throws JWNLException{
 
-        CooperateClosure cooperateClosure = new CooperateClosure();
-//        cooperateClosure.printAllTrees();
-//        cooperateClosure.buildClosure();
-        cooperateClosure.printWordList();
+        CompeteClosure.getInstance().printWordList();
+        System.out.println("-----------------");
+        CooperateClosure.getInstance().printWordList();
     }
 
 }
