@@ -66,19 +66,30 @@ public class CooperateClosure{
         this.indexWordList.add(PARTNERSHIP);
         this.indexWordList.add(AGREE);
 
-        this.pointerTargetTreeList = new ArrayList<PointerTargetTree>();
-        for (IndexWord indexWord : indexWordList){
-            PointerTargetTree tree = PointerUtils.getHyponymTree(indexWord.getSenses().get(0));
-            pointerTargetTreeList.add(tree);
-        }
+        build();
 
+    }
+
+    private void build() throws JWNLException{
         this.pointWordList = new ArrayList<PointWord>();
+
+        this.pointerTargetTreeList = new ArrayList<PointerTargetTree>();
         for (IndexWord indexWord : indexWordList){
             PointWord pointWord = new PointWord(indexWord.getLemma(), 0);
             pointWordList.add(pointWord);
+
+            PointerTargetTree tree = PointerUtils.getHyponymTree(indexWord.getSenses().get(0));
+            PointerTargetTreeNode rootNode = tree.getRootNode();
+            Integer depth = Integer.valueOf(DEPTH);
+            generateTree(rootNode, depth);
+
+            pointerTargetTreeList.add(tree);
         }
 
-
+//        for (IndexWord indexWord : indexWordList){
+//            PointWord pointWord = new PointWord(indexWord.getLemma(), 0);
+//            pointWordList.add(pointWord);
+//        }
     }
 
     public void printAllTrees() throws JWNLException{
@@ -90,20 +101,27 @@ public class CooperateClosure{
 
     }
 
-    public void buildClosure(){
-        for (PointerTargetTree pointerTargetTree : pointerTargetTreeList){
-//            PointerTargetNode rootNode = pointerTargetTree.getRootNode();
-//            System.out.println(rootNode.getSynset());
-            PointerTargetTreeNode rootNode = pointerTargetTree.getRootNode();
-
-            Integer depth = Integer.valueOf(DEPTH);
-            generateTree(rootNode, depth);
-        }
+    public void printWordList(){
 
         for (PointWord pointWord : pointWordList){
             pointWord.print();
         }
     }
+
+//    public void buildClosure(){
+//        for (PointerTargetTree pointerTargetTree : pointerTargetTreeList){
+////            PointerTargetNode rootNode = pointerTargetTree.getRootNode();
+////            System.out.println(rootNode.getSynset());
+//            PointerTargetTreeNode rootNode = pointerTargetTree.getRootNode();
+//
+//            Integer depth = Integer.valueOf(DEPTH);
+//            generateTree(rootNode, depth);
+//        }
+//
+//        for (PointWord pointWord : pointWordList){
+//            pointWord.print();
+//        }
+//    }
 
     private void generateTree(PointerTargetTreeNode rootNode, Integer depth){
         if (depth.equals(0))

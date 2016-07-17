@@ -12,8 +12,8 @@ public class MainController {
 
         CooperateClosure cooperateClosure = new CooperateClosure();
 //        cooperateClosure.printAllTrees();
-        cooperateClosure.buildClosure();
-
+//        cooperateClosure.buildClosure();
+        cooperateClosure.printWordList();
     }
 
 }
