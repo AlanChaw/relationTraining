@@ -10,9 +10,8 @@ public class MainController {
 
     public static void main(String[] args) throws JWNLException, java.io.IOException{
 
-//        CompeteClosure.getInstance().printWordList();
-//        System.out.println("-----------------");
-//        CooperateClosure.getInstance().printWordList();
+        System.out.println("build ok");
+        System.out.println("------------------");
 
         TrainingEntry trainingEntry = new TrainingEntry();
     }
