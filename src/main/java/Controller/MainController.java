@@ -1,5 +1,6 @@
 package Controller;
 
+import Training.TrainingEntry;
 import net.sf.extjwnl.JWNLException;
 
 /**
@@ -13,8 +14,7 @@ public class MainController {
 //        System.out.println("-----------------");
 //        CooperateClosure.getInstance().printWordList();
 
-        PointWordController pointWordController = new PointWordController();
-        OriginFileController originFileController = new OriginFileController();
+        TrainingEntry trainingEntry = new TrainingEntry();
     }
 
 }
