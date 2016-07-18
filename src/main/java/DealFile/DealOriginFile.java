@@ -1,4 +1,4 @@
-package DealOriginFile;
+package DealFile;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -58,8 +58,6 @@ public class DealOriginFile {
             String identifi = object.getString("identifi");
             System.out.println("处理文档" + identifi);
         }
-
-
     }
 
     public OriginFile fileJsonToModel(JSONObject object){

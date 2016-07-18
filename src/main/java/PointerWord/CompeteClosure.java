@@ -16,7 +16,7 @@ public class CompeteClosure extends PointWordClosure {
 
     private IndexWord COMPETE;
     private IndexWord CHALLENGE;
-    private IndexWord AGAINST;
+    private IndexWord AGAINST;      //against在wordnet中无法查找 要单独拿出来赋值
     private IndexWord VIE;
     private IndexWord CONTEND;
     private IndexWord FIGHT;

@@ -1,4 +1,4 @@
-package DealOriginFile;
+package DealFile;
 
 /**
  * Created by alan on 16/7/18.

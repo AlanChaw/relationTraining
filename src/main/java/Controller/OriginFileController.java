@@ -1,6 +1,6 @@
 package Controller;
 
-import DealOriginFile.DealOriginFile;
+import DealFile.DealOriginFile;
 
 /**
  * Created by alan on 16/7/18.

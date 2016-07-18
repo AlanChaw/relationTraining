@@ -50,10 +50,6 @@ public class PointWordClosure {
             pointerTargetTreeList.add(tree);
         }
 
-//        for (IndexWord indexWord : indexWordList){
-//            PointWord pointWord = new PointWord(indexWord.getLemma(), 0);
-//            pointWordList.add(pointWord);
-//        }
     }
 
     public void printAllTrees() throws JWNLException{
@@ -72,7 +68,6 @@ public class PointWordClosure {
         }
     }
 
-
     private void generateTree(PointerTargetTreeNode rootNode, Integer depth){
         if (depth.equals(0))
             return;
@@ -89,7 +84,6 @@ public class PointWordClosure {
         for (PointerTargetTreeNode childNode : childNodeList){
             generateTree(childNode, depth - 1);
         }
-
 
     }
 

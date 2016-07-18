@@ -1,11 +1,6 @@
 package Controller;
 
-import DealOriginFile.*;
-import PointerWord.CompeteClosure;
-import PointerWord.CooperateClosure;
 import net.sf.extjwnl.JWNLException;
-
-import java.util.List;
 
 /**
  * Created by alan on 16/7/16.
