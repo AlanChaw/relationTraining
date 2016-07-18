@@ -18,9 +18,8 @@ public class MainController {
 //        System.out.println("-----------------");
 //        CooperateClosure.getInstance().printWordList();
 
-
-        DealOriginFile test = new DealOriginFile();
-        test.generateOriginFiles();
+        PointWordController pointWordController = new PointWordController();
+        OriginFileController originFileController = new OriginFileController();
     }
 
 }

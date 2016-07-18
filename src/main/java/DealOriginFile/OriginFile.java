@@ -25,6 +25,8 @@ import java.util.List;
  *              ]
  * }
  */
+
+//原始文档数据模型
 public class OriginFile {
     private String identifi;
     private List<Doc> docs;
@@ -45,27 +47,14 @@ public class OriginFile {
         this.docs = docs;
     }
 
-    //文件中单个文档的类
-    public class Doc{
-        private String docNum;
-        private String content;
-
-        public String getDocNum() {
-            return docNum;
+    @Override
+    public String toString() {
+        String fileString = "identifi: " + this.identifi + "\n";
+        for (Doc doc : this.docs){
+            fileString += doc.toString() + "\n";
         }
-
-        public String getContent() {
-            return content;
-        }
-
-        public void setDocNum(String docNum) {
-            this.docNum = docNum;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
+        return fileString;
     }
-
-
 }
+
+
