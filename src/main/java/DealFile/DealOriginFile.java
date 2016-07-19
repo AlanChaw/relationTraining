@@ -16,7 +16,7 @@ public class DealOriginFile {
     private static DealOriginFile instance;
 
     //最后一个文档编号(为实际文档数量减一)
-    private final static int DOCNUM = 10;
+    public static int DOCNUM;
     private final static String FILEPATH = "/Users/alan/Documents/relation/relationFiles/OriginalDocWithIndex/";
     private final static String FILENAME = "OriginalDocWithIndex";
 
@@ -55,8 +55,14 @@ public class DealOriginFile {
             JSONObject object = new JSONObject(result);
             OriginFile originFileModel = fileJsonToModel(object);
             originFileList.add(originFileModel);
+
             String identifi = object.getString("identifi");
-            System.out.println("处理文档" + identifi);
+//            if (Integer.valueOf(identifi) % 5 == 0)
+//                System.out.print(".");
+            System.out.println(identifi);
+
+            br.close();
+            fileReader.close();
         }
     }
 

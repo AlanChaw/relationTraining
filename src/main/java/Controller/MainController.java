@@ -1,5 +1,6 @@
 package Controller;
 
+import DealFile.DealOriginFile;
 import Training.TrainingEntry;
 import net.sf.extjwnl.JWNLException;
 
@@ -12,6 +13,12 @@ public class MainController {
 
         System.out.println("build ok");
         System.out.println("------------------");
+
+        //最大文档编号
+        DealOriginFile.DOCNUM = 55;
+        //窗口长度
+        TrainingEntry.WINDOWLENGTH = 50;
+
 
         TrainingEntry trainingEntry = new TrainingEntry();
     }

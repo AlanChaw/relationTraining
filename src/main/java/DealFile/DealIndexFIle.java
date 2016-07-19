@@ -13,10 +13,10 @@ public class DealIndexFile {
 
     public static DealIndexFile instance;
 
-    private List<Entity> entityList;
+    private List<EntityPair> entityPairList;
 
     private DealIndexFile() throws java.io.IOException{
-        this.entityList = new ArrayList<Entity>();
+        this.entityPairList = new ArrayList<EntityPair>();
 
 
         String result;
@@ -24,9 +24,9 @@ public class DealIndexFile {
         FileReader fileReader = new FileReader(file);
         BufferedReader br = new BufferedReader(fileReader);
         while ((result = br.readLine()) != null){
-            Entity entity = new Entity(result);
-            entityList.add(entity);
-//            System.out.println(entity.toString());
+            EntityPair entityPair = new EntityPair(result);
+            entityPairList.add(entityPair);
+//            System.out.println(entityPair.toString());
         }
 
     }
@@ -39,7 +39,7 @@ public class DealIndexFile {
         return instance;
     }
 
-    public List<Entity> getEntityList() {
-        return entityList;
+    public List<EntityPair> getEntityPairList() {
+        return entityPairList;
     }
 }

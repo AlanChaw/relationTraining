@@ -3,14 +3,14 @@ package DealFile;
 /**
  * Created by alan on 16/7/18.
  */
-public class Entity {
+public class EntityPair {
     private String identifi;
     private String entityName_1;
     private String entityName_2;
     private Double strengthValue;
     private Integer relation;
 
-    public Entity(String entityString){
+    public EntityPair(String entityString){
         String[] elements = entityString.split("\t");
 
         this.identifi = elements[0];
