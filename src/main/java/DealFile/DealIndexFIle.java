@@ -18,13 +18,15 @@ public class DealIndexFile {
     private DealIndexFile() throws java.io.IOException{
         this.entityPairList = new ArrayList<EntityPair>();
 
-
         String result;
         File file = new File("file/relationsWithIndex.txt");
         FileReader fileReader = new FileReader(file);
         BufferedReader br = new BufferedReader(fileReader);
         while ((result = br.readLine()) != null){
             EntityPair entityPair = new EntityPair(result);
+
+            if (Integer.valueOf(entityPair.getIdentifi()) >= DealOriginFile.DOCNUM)
+                break;
             entityPairList.add(entityPair);
 //            System.out.println(entityPair.toString());
         }

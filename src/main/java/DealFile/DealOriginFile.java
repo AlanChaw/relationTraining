@@ -47,10 +47,16 @@ public class DealOriginFile {
 
         for (String filePath : filePathList){
             String result;
-            File file = new File(filePath);
-            FileReader fileReader = new FileReader(file);
+            FileReader fileReader = new FileReader(filePath);
             BufferedReader br = new BufferedReader(fileReader);
             result = br.readLine();
+//            br.close();fileReader.close();
+
+//            String result;
+//            FileReader reader = new FileReader(filePath);
+//            BufferedReader bf = new BufferedReader(reader);
+//
+//            result = reader.toString();
 
             JSONObject object = new JSONObject(result);
             OriginFile originFileModel = fileJsonToModel(object);
@@ -59,10 +65,11 @@ public class DealOriginFile {
             String identifi = object.getString("identifi");
 //            if (Integer.valueOf(identifi) % 5 == 0)
 //                System.out.print(".");
-            System.out.println(identifi);
+//            System.out.println(identifi);
+//
+//            br.close();
+//            fileReader.close();
 
-            br.close();
-            fileReader.close();
         }
     }
 

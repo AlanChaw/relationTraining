@@ -10,7 +10,7 @@
 
     <dependencies>
 
-        <!--wordnet依赖包-->
+        <!--wordnet依赖-->
         <dependency>
             <groupId>net.sf.extjwnl</groupId>
             <artifactId>extjwnl</artifactId>

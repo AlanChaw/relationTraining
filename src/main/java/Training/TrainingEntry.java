@@ -17,13 +17,15 @@ public class TrainingEntry {
     public static int WINDOWLENGTH;
 
     //训练集大小, 这里定义竞争和合作关系各取25个为训练集
-    private static final int TESTSETNUM = 25;
+    private static final int TESTSETNUM = 5;
 
     private List<OriginFile> originFileList;
     private List<EntityPair> entityPairList;
 
     private List<PointWord> competePointWords;
     private List<PointWord> cooperatePointWords;
+    private List<PointWordExtend> competeExtendedPonintWords;
+    private List<PointWordExtend> cooperateExtendedPointWords;
 
     private List<EntityPair> competeList;
     private List<EntityPair> cooperateList;
@@ -34,13 +36,12 @@ public class TrainingEntry {
 
     public TrainingEntry() throws java.io.IOException, JWNLException{
 
-
         System.out.println("处理文档");
         this.originFileList = new ArrayList<OriginFile>();
         this.originFileList = DealOriginFile.getInstance().getOriginFileList();
         this.entityPairList = new ArrayList<EntityPair>();
         this.entityPairList = DealIndexFile.getInstance().getEntityPairList();
-        System.out.println("\n处理文档 ok");
+        System.out.println("处理文档 ok");
         System.out.println("------------------");
 
         System.out.println("生成指示词闭包");
@@ -54,18 +55,30 @@ public class TrainingEntry {
 
         this.competeList = new ArrayList<EntityPair>();
         this.cooperateList = new ArrayList<EntityPair>();
+        this.competeExtendedPonintWords = new ArrayList<PointWordExtend>();
+        this.cooperateExtendedPointWords = new ArrayList<PointWordExtend>();
         this.testSetCompete = new ArrayList<EntityPair>();
         this.testSetCooperate = new ArrayList<EntityPair>();
         this.trainingSetCompete = new ArrayList<EntityPair>();
         this.trainingSetCooperate = new ArrayList<EntityPair>();
+
+        for (PointWord pointWord : competePointWords){
+            PointWordExtend pointWordExtend = new PointWordExtend(pointWord);
+            this.competeExtendedPonintWords.add(pointWordExtend);
+        }
+        for (PointWord pointWord : cooperatePointWords){
+            PointWordExtend pointWordExtend = new PointWordExtend(pointWord);
+            this.cooperateExtendedPointWords.add(pointWordExtend);
+        }
+
+
         generateTrainingAndTestSet_test();
 //        generateTrainingAndTestSet();
-
         trainEveryEntityPair();
     }
 
     /**
-     * wbcao:随机生成测试集和训练集
+     * 随机生成测试集和训练集
      * 取1/10为测试集,并保证测试集中竞争和合作关系对的数量相等
      */
     public void generateTrainingAndTestSet(){
@@ -141,7 +154,7 @@ public class TrainingEntry {
     }
 
     /**
-     * wbcao:##测试用##  固定取竞争和合作关系对集合中前25个关系对为测试集 其余为训练集
+     * ##测试用##  固定取竞争和合作关系对集合中前25个关系对为测试集 其余为训练集
      */
     public void generateTrainingAndTestSet_test(){
         for (EntityPair entity : entityPairList){
@@ -158,14 +171,14 @@ public class TrainingEntry {
         System.out.println("合作关系对数量:" + cooperateNum);
         System.out.println("------------------");
 
-        for (int i = 0; i < 25; i++){
+        for (int i = 0; i < TESTSETNUM; i++){
             this.testSetCompete.add(competeList.get(i));
             this.testSetCooperate.add(cooperateList.get(i));
         }
-        for (int i = 25; i < competeList.size(); i++){
+        for (int i = TESTSETNUM; i < competeList.size(); i++){
             this.trainingSetCompete.add(competeList.get(i));
         }
-        for (int i = 25; i < cooperateList.size(); i++){
+        for (int i = TESTSETNUM; i < cooperateList.size(); i++){
             this.trainingSetCooperate.add(cooperateList.get(i));
         }
 
@@ -177,24 +190,43 @@ public class TrainingEntry {
     }
 
     /**
-     * wbcao:分别对两个训练集关系对中的每个关系对进行训练
+     * 分别对两个训练集关系对中的每个关系对进行训练
      */
     public void trainEveryEntityPair(){
+        System.out.println("开始对竞争关系对训练");
+        Integer competeSentencesNum = 0;
         for (EntityPair entityPair : trainingSetCompete){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
             OriginFile originFile = originFileList.get(identifi);
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = findSentencesInDocs(doc, entityPair);
-                doTheTraining(sentences);
+                competeSentencesNum += sentences.size();
+                doTheTraining(sentences, entityPair.getRelation());
             }
         }
+        System.out.println("------------------");
 
+
+        System.out.println("开始对合作关系对训练");
+        Integer cooperateSentencesNum = 0;
+        for (EntityPair entityPair : trainingSetCooperate){
+            Integer identifi = Integer.valueOf(entityPair.getIdentifi());
+            OriginFile originFile = originFileList.get(identifi);
+            for (Doc doc : originFile.getDocs()){
+                List<MatchSentence> sentences = findSentencesInDocs(doc, entityPair);
+                cooperateSentencesNum+= sentences.size();
+                doTheTraining(sentences, entityPair.getRelation());
+            }
+        }
+        System.out.println("------------------");
+
+        doStatistic(competeSentencesNum, cooperateSentencesNum);
     }
 
     /**********************核心部分*******************************/
 
     /**
-     * wbcao:在某一关系对所出现的某一个文档中,找出在给定窗口长度下关系对中两个实体共同出现的句子
+     * 在某一关系对所出现的某一个文档中,找出在给定窗口长度下关系对中两个实体共同出现的句子
      * @param doc   给定的文档
      * @param entityPair    某一特定的实体对
      * @return 在该文档中所有匹配的句子
@@ -219,8 +251,8 @@ public class TrainingEntry {
                 }
 
                 //检索句子中是否有另一个实体词,如果有则保留
-                for (int j = 0; j < sentence.getSentence().size(); j++){
-                    if (sentence.getSentence().get(j).getLemma().equals(entityPair.getEntityName_2()))
+                for (int j = 0; j < sentence.getLemmas().size(); j++){
+                    if (sentence.getLemmas().get(j).getLemma().equals(entityPair.getEntityName_2()))
                         sentences.add(sentence);
                 }
             }
@@ -230,8 +262,52 @@ public class TrainingEntry {
         return sentences;
     }
 
-    public void doTheTraining(List<MatchSentence> sentences){
+    /**
+     * 统计指示词在sentence中出现的次数
+     * @param sentences
+     * @param relation
+     */
+    public void doTheTraining(List<MatchSentence> sentences, Integer relation){
+        List<PointWordExtend> pointWordList = new ArrayList<PointWordExtend>();
+        if (relation < 0){
+            pointWordList = competeExtendedPonintWords;
+        }
+        else {
+            pointWordList = cooperateExtendedPointWords;
+        }
 
+        for (MatchSentence sentence : sentences){
+            for (Lemma lemma : sentence.getLemmas()){
+                for (PointWordExtend word : pointWordList){
+                    if (word.getPointWord().getLemma().equals(lemma.getLemma())){
+                        word.setAppearCount(word.getAppearCount() + 1);
+//                        System.out.println("发现指示词: " + lemma.getLemma());
+                    }
+
+                }
+            }
+
+        }
+
+    }
+
+    /**
+     * 经过训练后,对每个指示词在句子中出现的频率统计,计算statisticValue
+     */
+    public void doStatistic(Integer competeSentencesNum, Integer cooperateSentencesNum){
+        System.out.println("竞争关系对中,两实体共同出现的句子: " + competeSentencesNum + "条");
+        for (PointWordExtend pointWordExtend : competeExtendedPonintWords){
+            if (pointWordExtend.getAppearCount() > 0){
+                System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现: " + pointWordExtend.getAppearCount() + " 次");
+            }
+        }
+
+        System.out.println("合作关系中, 两实体共同出现的句子: " + cooperateSentencesNum + "条");
+        for (PointWordExtend pointWordExtend : cooperateExtendedPointWords){
+            if (pointWordExtend.getAppearCount() > 0){
+                System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现" + pointWordExtend.getAppearCount() + "次");
+            }
+        }
 
 
     }

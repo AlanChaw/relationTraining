@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * wbcao:原始文档的JSON串格式:
+ * 原始文档的JSON串格式:
  * {
  *     "identifi":  //标记的关系对编号
  *     "docs":      //共同出现的文档list

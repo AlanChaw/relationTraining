@@ -10,31 +10,31 @@ import java.util.List;
  */
 public class MatchSentence {
 
-    List<Lemma> sentence;
+    List<Lemma> lemmas;
     Integer relation;
 
     public MatchSentence(){
-        this.sentence = new ArrayList<Lemma>();
+        this.lemmas = new ArrayList<Lemma>();
 
     }
 
     public void addLemma(Lemma lemma){
-        this.sentence.add(lemma);
+        this.lemmas.add(lemma);
     }
 
     public void setRelation(Integer relation) {
         this.relation = relation;
     }
 
-    public void setSentence(List<Lemma> sentence) {
-        this.sentence = sentence;
+    public void setLemmas(List<Lemma> lemmas) {
+        this.lemmas = lemmas;
     }
 
     public Integer getRelation() {
         return relation;
     }
 
-    public List<Lemma> getSentence() {
-        return sentence;
+    public List<Lemma> getLemmas() {
+        return lemmas;
     }
 }

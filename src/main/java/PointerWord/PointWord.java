@@ -6,7 +6,7 @@ package PointerWord;
 
 
 /**
- * wbcao:指示词类,存储指示词词元及指示词级别
+ * 指示词类,存储指示词词元及指示词级别
  */
 public class PointWord {
 
@@ -16,7 +16,6 @@ public class PointWord {
     public PointWord(String lemma, Integer level){
         this.lemma = lemma;
         this.level = level;
-
 
     }
 
@@ -41,5 +40,10 @@ public class PointWord {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    @Override
+    public String toString() {
+        return "lemma: " + lemma + "\tletel:" + level;
     }
 }

@@ -20,7 +20,7 @@ public class PointWordClosure {
     protected final Dictionary dictionary;
 
     //查找子树的深度
-    protected static final int DEPTH = 1;
+    public static int DEPTH;
 
     protected List<IndexWord> indexWordList;
     protected List<PointWord> pointWordList;
@@ -49,7 +49,6 @@ public class PointWordClosure {
 
             pointerTargetTreeList.add(tree);
         }
-
     }
 
     public void printAllTrees() throws JWNLException{
@@ -88,7 +87,7 @@ public class PointWordClosure {
     }
 
     /**
-     * wbcao:检测要添加的指示词是否已存在于集合中
+     * 检测要添加的指示词是否已存在于集合中
      * @param pointWord
      * @return
      */

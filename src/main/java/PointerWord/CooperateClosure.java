@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * wbcao:合作指示词闭包
+ * 合作指示词闭包
  */
 public class CooperateClosure extends PointWordClosure{
     private static CooperateClosure instance;
