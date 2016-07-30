@@ -2,6 +2,7 @@ package Controller;
 
 import DealFile.DealOriginFile;
 import PointerWord.PointWordClosure;
+import Training.ProcessTraining.DirectSearchTraining;
 import Training.TrainingEntry;
 import net.sf.extjwnl.JWNLException;
 
@@ -17,12 +18,12 @@ public class MainController {
         //最大文档编号
         DealOriginFile.DOCNUM = 50;
         //窗口长度
-        TrainingEntry.WINDOWLENGTH = 200;
+        DirectSearchTraining.WINDOWLENGTH = 200;
         //近义词树的深度
         PointWordClosure.DEPTH = 2;
 
         System.out.println("关系对总数 " + (DealOriginFile.DOCNUM));
-        System.out.println("窗口长度 " + TrainingEntry.WINDOWLENGTH);
+        System.out.println("窗口长度 " + DirectSearchTraining.WINDOWLENGTH);
         System.out.println("wordne近义词树深度 " + PointWordClosure.DEPTH);
         System.out.println("------------------");
 
