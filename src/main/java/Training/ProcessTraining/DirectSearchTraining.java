@@ -122,7 +122,7 @@ public class DirectSearchTraining implements TrainingFliter {
         for (PointWordExtend pointWordExtend : task.getPointWordExtendList()){
             if (pointWordExtend.getAppearCount() > 0){
                 System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现: " + pointWordExtend.getAppearCount() + " 次");
-                
+
 
             }
         }
