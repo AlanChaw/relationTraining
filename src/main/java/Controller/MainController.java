@@ -2,8 +2,9 @@ package Controller;
 
 import DealFile.DealOriginFile;
 import PointerWord.PointWordClosure;
+import Training.PointWordExtend;
 import Training.ProcessTraining.DirectSearchTraining;
-import Training.TrainingEntry;
+import Training.Entry;
 import net.sf.extjwnl.JWNLException;
 
 /**
@@ -21,13 +22,15 @@ public class MainController {
         DirectSearchTraining.WINDOWLENGTH = 200;
         //近义词树的深度
         PointWordClosure.DEPTH = 2;
-
-        System.out.println("关系对总数 " + (DealOriginFile.DOCNUM));
-        System.out.println("窗口长度 " + DirectSearchTraining.WINDOWLENGTH);
-        System.out.println("wordne近义词树深度 " + PointWordClosure.DEPTH);
+        //递减因子
+        PointWordExtend.DECREASEFACTOR = 0.5;
+//
+//        System.out.println("关系对总数 " + (DealOriginFile.DOCNUM));
+//        System.out.println("窗口长度 " + DirectSearchTraining.WINDOWLENGTH);
+//        System.out.println("wordne近义词树深度 " + PointWordClosure.DEPTH);
         System.out.println("------------------");
 
-        TrainingEntry trainingEntry = new TrainingEntry();
+        Entry entry = new Entry();
     }
 
 }

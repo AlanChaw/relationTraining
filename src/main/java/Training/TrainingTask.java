@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by alan on 16/7/30.
  */
-public class Task {
+public class TrainingTask {
     private List<EntityPair> trainingSet;
     private List<OriginFile> originFileList;
     private List<PointWordExtend> pointWordExtendList;

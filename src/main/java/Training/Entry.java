@@ -4,6 +4,7 @@ import DealFile.*;
 import PointerWord.CompeteClosure;
 import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
+import Training.ProcessPredict.DirectPredict;
 import Training.ProcessTraining.DirectSearchTraining;
 import net.sf.extjwnl.JWNLException;
 
@@ -14,7 +15,7 @@ import java.util.Random;
 /**
  * Created by alan on 16/7/18.
  */
-public class TrainingEntry {
+public class Entry {
 
     //训练集大小, 这里定义竞争和合作关系各取25个为训练集
     private static final int TESTSETNUM = 5;
@@ -34,7 +35,7 @@ public class TrainingEntry {
     private List<EntityPair> testSetCompete;
     private List<EntityPair> testSetCooperate;
 
-    public TrainingEntry() throws java.io.IOException, JWNLException{
+    public Entry() throws java.io.IOException, JWNLException{
 
         System.out.println("处理文档");
         this.originFileList = new ArrayList<OriginFile>();
@@ -51,7 +52,6 @@ public class TrainingEntry {
         this.cooperatePointWords = CooperateClosure.getInstance().getPointWordList();
         System.out.println("指示词闭包 ok");
         System.out.println("------------------");
-
 
         this.competeList = new ArrayList<EntityPair>();
         this.cooperateList = new ArrayList<EntityPair>();
@@ -71,17 +71,23 @@ public class TrainingEntry {
             this.cooperateExtendedPointWords.add(pointWordExtend);
         }
 
-
+        //生成训练集和测试集
         generateTrainingAndTestSet_test();
 //        generateTrainingAndTestSet();
+        //对每个训练集关系对进行训练
         trainEveryEntityPair();
+        //用训练结果进行预测
+        PredictTask predictTask = doPredict();
+        //对预测结果进行评估
+        doEstimate(predictTask);
+
     }
 
     /**
      * 随机生成测试集和训练集
      * 取1/10为测试集,并保证测试集中竞争和合作关系对的数量相等
      */
-    public void generateTrainingAndTestSet(){
+    private void generateTrainingAndTestSet(){
         Random rand = new Random();
 //        for (int i = 0; i < 100; i++){
 //
@@ -155,7 +161,7 @@ public class TrainingEntry {
     /**
      * ##测试用##  固定取竞争和合作关系对集合中前25个关系对为测试集 其余为训练集
      */
-    public void generateTrainingAndTestSet_test(){
+    private void generateTrainingAndTestSet_test(){
         for (EntityPair entity : entityPairList){
             if (entity.getRelation() > 0)
                 cooperateList.add(entity);
@@ -192,137 +198,83 @@ public class TrainingEntry {
     /**
      * 分别对两个训练集关系对中的每个关系对进行训练
      */
-    public void trainEveryEntityPair(){
-//        System.out.println("开始对竞争关系对训练");
-//        Integer competeSentencesNum = 0;
-//        for (EntityPair entityPair : trainingSetCompete){
-//            Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-//            OriginFile originFile = originFileList.get(identifi);
-//            for (Doc doc : originFile.getDocs()){
-//                List<MatchSentence> sentences = findSentencesInDocs(doc, entityPair);
-//                competeSentencesNum += sentences.size();
-//                doTheTraining(sentences, entityPair.getRelation());
-//            }
-//        }
-//        System.out.println("------------------");
-//
-//
-//        System.out.println("开始对合作关系对训练");
-//        Integer cooperateSentencesNum = 0;
-//        for (EntityPair entityPair : trainingSetCooperate){
-//            Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-//            OriginFile originFile = originFileList.get(identifi);
-//            for (Doc doc : originFile.getDocs()){
-//                List<MatchSentence> sentences = findSentencesInDocs(doc, entityPair);
-//                cooperateSentencesNum+= sentences.size();
-//                doTheTraining(sentences, entityPair.getRelation());
-//            }
-//        }
-//        System.out.println("------------------");
-//
-//        doStatistic(competeSentencesNum, cooperateSentencesNum);
-        TrainingFliter fliter = new DirectSearchTraining();
-        Task task = new Task();
-        task.setOriginFileList(originFileList);
-        task.setPointWordExtendList(competeExtendedPonintWords);
-        task.setTrainingSet(trainingSetCompete);
-        fliter.handleTraining(task);
+    private void trainEveryEntityPair(){
 
-        task.setPointWordExtendList(cooperateExtendedPointWords);
-        task.setTrainingSet(trainingSetCooperate);
-        fliter.handleTraining(task);
+        TrainingFliter fliter = new DirectSearchTraining();
+        TrainingTask trainingTask = new TrainingTask();
+        trainingTask.setOriginFileList(originFileList);
+        trainingTask.setPointWordExtendList(competeExtendedPonintWords);
+        trainingTask.setTrainingSet(trainingSetCompete);
+        fliter.handleTraining(trainingTask);
+
+        trainingTask.setPointWordExtendList(cooperateExtendedPointWords);
+        trainingTask.setTrainingSet(trainingSetCooperate);
+        fliter.handleTraining(trainingTask);
 
     }
 
-    /**********************核心部分*******************************/
+    private PredictTask doPredict(){
+        List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();
+        for (int i = 0; i < trainingSetCompete.size() + trainingSetCooperate.size(); i++){
+            EntityPairExtend entityPairExtend = new EntityPairExtend();
+            if (i < trainingSetCompete.size()){
+                entityPairExtend.setEntityPair(trainingSetCompete.get(i));
+            }else {
+                entityPairExtend.setEntityPair(trainingSetCooperate.get(i - trainingSetCooperate.size()));
+            }
+            entityPairExtend.setPredictValue(0);
+            entityPairsToPredict.add(entityPairExtend);
+        }
 
-    /**
-     * 在某一关系对所出现的某一个文档中,找出在给定窗口长度下关系对中两个实体共同出现的句子
-     * @param doc   给定的文档
-     * @param entityPair    某一特定的实体对
-     * @return 在该文档中所有匹配的句子
-     */
-//    public List<MatchSentence> findSentencesInDocs(Doc doc, EntityPair entityPair){
-//        List<MatchSentence> sentences = new ArrayList<MatchSentence>();
-//
-//        //遍历整个文档,直接检索,找到实体词出现的位置
-//        for (int i = 0; i < doc.getLemmaList().size(); i++){
-//            Lemma lemma = doc.getLemmaList().get(i);
-//            if (lemma.getLemma().equals(entityPair.getEntityName_1())){
-//                //该词窗口的下界
-//                Integer lowerBound = (i >= WINDOWLENGTH) ? (i - WINDOWLENGTH) : 0;
-//                //该词窗口的上界(实际是下标,便于操作)
-//                Integer upperBound = ((i + WINDOWLENGTH + 1) <= doc.getLemmaList().size()) ? (i + WINDOWLENGTH) : (doc.getLemmaList().size() - 1);
-//
-//                //设置句子
-//                MatchSentence sentence = new MatchSentence();
-//                sentence.setRelation(entityPair.getRelation());
-//                for (int j = lowerBound; j <= upperBound; j++){
-//                    sentence.addLemma(doc.getLemmaList().get(j));
-//                }
-//
-//                //检索句子中是否有另一个实体词,如果有则保留
-//                for (int j = 0; j < sentence.getLemmas().size(); j++){
-//                    if (sentence.getLemmas().get(j).getLemma().equals(entityPair.getEntityName_2()))
-//                        sentences.add(sentence);
-//                }
-//            }
-//
-//
-//        }
-//        return sentences;
-//    }
-//
-//    /**
-//     * 统计指示词在sentence中出现的次数
-//     * @param sentences
-//     * @param relation
-//     */
-//    public void doTheTraining(List<MatchSentence> sentences, Integer relation){
-//        List<PointWordExtend> pointWordList = new ArrayList<PointWordExtend>();
-//        if (relation < 0){
-//            pointWordList = competeExtendedPonintWords;
-//        }
-//        else {
-//            pointWordList = cooperateExtendedPointWords;
-//        }
-//
-//
-//        for (MatchSentence sentence : sentences){
-//            for (Lemma lemma : sentence.getLemmas()){
-//                for (PointWordExtend word : pointWordList){
-//                    if (word.getPointWord().getLemma().equals(lemma.getLemma())){
-//                        word.setAppearCount(word.getAppearCount() + 1);
-////                        System.out.println("发现指示词: " + lemma.getLemma());
-//                    }
-//
-//                }
-//            }
-//
-//        }
-//
-//    }
-//
-//    /**
-//     * 经过训练后,对每个指示词在句子中出现的频率统计,计算statisticValue
-//     */
-//    public void doStatistic(Integer competeSentencesNum, Integer cooperateSentencesNum){
-//        System.out.println("竞争关系对中,两实体共同出现的句子: " + competeSentencesNum + "条");
-//        for (PointWordExtend pointWordExtend : competeExtendedPonintWords){
-//            if (pointWordExtend.getAppearCount() > 0){
-//                System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现: " + pointWordExtend.getAppearCount() + " 次");
-//            }
-//        }
-//
-//        System.out.println("合作关系中, 两实体共同出现的句子: " + cooperateSentencesNum + "条");
-//        for (PointWordExtend pointWordExtend : cooperateExtendedPointWords){
-//            if (pointWordExtend.getAppearCount() > 0){
-//                System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现" + pointWordExtend.getAppearCount() + "次");
-//            }
-//        }
-//
-//
-//    }
+        PredictFliter fliter = new DirectPredict();
+        PredictTask predictTask = new PredictTask();
+        predictTask.setOriginFileList(originFileList);
+        predictTask.setCompeteExtendedPointWords(competeExtendedPonintWords);
+        predictTask.setCooperateExtendedPointWords(cooperateExtendedPointWords);
+        predictTask.setEntityPairsToPredict(entityPairsToPredict);
+        fliter.handlePredict(predictTask);
+
+        return predictTask;
+    }
+
+    private void doEstimate(PredictTask predictTask){
+        //计算准确率
+        Double accuracy = caculateAccuracy(predictTask);
+        //计算精确率
+        Double precision = caculatePrecision(predictTask);
+        //计算召回率
+        Double recall = caculateRecall(predictTask);
+
+        System.out.println("准确率: " + accuracy);
+    }
+
+    private Double caculateAccuracy(PredictTask predictTask){
+        Integer allNum = 0;
+        Integer correctNum = 0;
+
+        for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
+            allNum++;
+
+            if (entityPairExtend.getPredictValue() == entityPairExtend.getEntityPair().getRelation()){
+                correctNum++;
+            }
+        }
+
+        return (double)correctNum / allNum;
+    }
+
+    private Double caculatePrecision(PredictTask predictTask){
+
+
+        return 0.0;
+    }
+
+    private Double caculateRecall(PredictTask predictTask){
+
+
+        return 0.0;
+    }
+
 
 
 }

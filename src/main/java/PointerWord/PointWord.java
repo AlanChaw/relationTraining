@@ -44,6 +44,6 @@ public class PointWord {
 
     @Override
     public String toString() {
-        return "lemma: " + lemma + "\tletel:" + level;
+        return "lemma: " + lemma + "\tlevel:" + level;
     }
 }

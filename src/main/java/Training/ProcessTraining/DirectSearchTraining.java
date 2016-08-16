@@ -10,7 +10,7 @@ import DealFile.Lemma;
 import DealFile.OriginFile;
 import Training.MatchSentence;
 import Training.PointWordExtend;
-import Training.Task;
+import Training.TrainingTask;
 import Training.TrainingFliter;
 
 import java.util.ArrayList;
@@ -22,10 +22,10 @@ import java.util.List;
 public class DirectSearchTraining implements TrainingFliter {
     public static int WINDOWLENGTH;
 
-    private Task task;
+    private TrainingTask trainingTask;
 
-    public int handleTraining(Task task) {
-        this.task = task;
+    public int handleTraining(TrainingTask task) {
+        this.trainingTask = task;
 
         Integer sentencesNum = 0;
 
@@ -96,7 +96,7 @@ public class DirectSearchTraining implements TrainingFliter {
 //        else {
 //            pointWordList = cooperateExtendedPointWords;
 //        }
-        pointWordList = task.getPointWordExtendList();
+        pointWordList = trainingTask.getPointWordExtendList();
 
         for (MatchSentence sentence : sentences){
             for (Lemma lemma : sentence.getLemmas()){
@@ -116,18 +116,31 @@ public class DirectSearchTraining implements TrainingFliter {
     /**
      * 经过训练后,对每个指示词在句子中出现的频率统计,计算statisticValue
      */
-    public void doStatistic(Integer sentencesNum){
+    public void doStatistic(Integer sentencesNum) {
 
         System.out.println("两实体共同出现的句子: " + sentencesNum + "条");
-        for (PointWordExtend pointWordExtend : task.getPointWordExtendList()){
-            if (pointWordExtend.getAppearCount() > 0){
+        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+            if (pointWordExtend.getAppearCount() > 0) {
                 System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现: " + pointWordExtend.getAppearCount() + " 次");
-
-
             }
         }
-
         System.out.println("------------------");
+
+        Integer wordNum = 0;
+        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+            wordNum += pointWordExtend.getAppearCount();
+        }
+
+        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+            if (pointWordExtend.getAppearCount() > 0){
+                Double statisticValue = (double)pointWordExtend.getAppearCount() / wordNum;
+                pointWordExtend.setStatisticValue(statisticValue);
+
+                System.out.println(pointWordExtend.toString());
+            }
+
+        }
+
 
     }
 

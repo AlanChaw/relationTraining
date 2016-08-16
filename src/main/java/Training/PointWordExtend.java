@@ -8,6 +8,7 @@ import PointerWord.PointWord;
 
 
 public class PointWordExtend {
+    public static Double DECREASEFACTOR;
 
     private PointWord pointWord;
     private Double statisticValue;
@@ -28,7 +29,7 @@ public class PointWordExtend {
     }
 
     public void setStatisticValue(Double statisticValue) {
-        this.statisticValue = statisticValue;
+        this.statisticValue = statisticValue * Math.pow(DECREASEFACTOR, this.pointWord.getLevel());
     }
 
     public Double getStatisticValue() {
@@ -41,5 +42,10 @@ public class PointWordExtend {
 
     public PointWord getPointWord() {
         return pointWord;
+    }
+
+    @Override
+    public String toString() {
+        return "word : " + pointWord + "\t" + "statisticValue : " + statisticValue + "\t" + "count : " + appearCount;
     }
 }
