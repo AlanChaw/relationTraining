@@ -75,8 +75,16 @@ public class PointWordClosure {
             PointWord pointWord = new PointWord(word.getLemma(), DEPTH - depth + 1);
             if (alreadyExist(pointWord))
                 continue;
-            else
+            else{
+//                pointWordList.add(pointWord);
+
+                //添加之前做筛选
+                if (needToFilter(pointWord)){
+                    continue;
+                }
                 pointWordList.add(pointWord);
+
+            }
         }
 
         List<PointerTargetTreeNode> childNodeList = rootNode.getChildTreeList();
@@ -98,6 +106,23 @@ public class PointWordClosure {
         }
         return false;
 
+    }
+
+
+    /**
+     * 检测要添加的指示词是否在筛选集合中
+     * @param pointWord
+     * @return
+     */
+    private boolean needToFilter(PointWord pointWord){
+        if (pointWord.getLemma().equals("have")){
+            return true;
+        }
+        if (pointWord.getLemma().equals("call")){
+            return true;
+        }
+
+        return false;
     }
 
     public List<PointWord> getPointWordList() {
