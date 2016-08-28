@@ -8,10 +8,7 @@ import DealFile.Doc;
 import DealFile.EntityPair;
 import DealFile.Lemma;
 import DealFile.OriginFile;
-import Training.MatchSentence;
-import Training.PointWordExtend;
-import Training.TrainingTask;
-import Training.TrainingFliter;
+import Training.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,8 @@ public class DirectSearchTraining implements TrainingFliter {
 
         for (EntityPair entityPair : task.getTrainingSet()){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-            OriginFile originFile = task.getOriginFileList().get(identifi);
+//            OriginFile originFile = task.getOriginFileList().get(identifi);
+            OriginFile originFile = Entry.fileJsonToModel(task.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = findSentencesInDocs(doc, entityPair);
                 sentencesNum += sentences.size();

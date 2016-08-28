@@ -2,6 +2,7 @@ package Training;
 
 import DealFile.EntityPair;
 import DealFile.OriginFile;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -10,14 +11,14 @@ import java.util.List;
  */
 public class TrainingTask {
     private List<EntityPair> trainingSet;
-    private List<OriginFile> originFileList;
+    private List<JSONObject> originFileList;
     private List<PointWordExtend> pointWordExtendList;
 
     public List<EntityPair> getTrainingSet() {
         return trainingSet;
     }
 
-    public List<OriginFile> getOriginFileList() {
+    public List<JSONObject> getOriginFileList() {
         return originFileList;
     }
 
@@ -25,7 +26,7 @@ public class TrainingTask {
         return pointWordExtendList;
     }
 
-    public void setOriginFileList(List<OriginFile> originFileList) {
+    public void setOriginFileList(List<JSONObject> originFileList) {
         this.originFileList = originFileList;
     }
 

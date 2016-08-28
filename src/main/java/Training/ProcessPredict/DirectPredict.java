@@ -3,10 +3,7 @@ package Training.ProcessPredict;
 import DealFile.Doc;
 import DealFile.Lemma;
 import DealFile.OriginFile;
-import Training.EntityPairExtend;
-import Training.PointWordExtend;
-import Training.PredictFliter;
-import Training.PredictTask;
+import Training.*;
 
 import java.util.List;
 
@@ -30,7 +27,7 @@ public class DirectPredict implements PredictFliter {
 
     private void doPredict(EntityPairExtend entityPairExtend){
         Integer identifi = Integer.valueOf(entityPairExtend.getEntityPair().getIdentifi());
-        OriginFile originFile = predictTask.getOriginFileList().get(identifi);
+        OriginFile originFile = Entry.fileJsonToModel(predictTask.getOriginFileList().get(identifi));
         List<Doc> docs = originFile.getDocs();
 
         Double cooperateValue = 0.0;

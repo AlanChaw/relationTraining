@@ -21,7 +21,7 @@ public class DealOriginFile {
     private final static String FILENAME = "OriginalDocWithIndex";
 
     private List<String> filePathList;
-    private List<OriginFile> originFileList;
+    private List<JSONObject> originFileList;
 
     private DealOriginFile() throws java.io.IOException{
         this.filePathList = new ArrayList<String>();
@@ -30,7 +30,7 @@ public class DealOriginFile {
             filePathList.add(fileName);
         }
 
-        this.originFileList = new ArrayList<OriginFile>();
+        this.originFileList = new ArrayList<JSONObject>();
 
         generateOriginFiles();
     }
@@ -50,6 +50,7 @@ public class DealOriginFile {
             FileReader fileReader = new FileReader(filePath);
             BufferedReader br = new BufferedReader(fileReader);
             result = br.readLine();
+
 //            br.close();fileReader.close();
 
 //            String result;
@@ -59,49 +60,49 @@ public class DealOriginFile {
 //            result = reader.toString();
 
             JSONObject object = new JSONObject(result);
-            OriginFile originFileModel = fileJsonToModel(object);
-            originFileList.add(originFileModel);
-
+//            OriginFile originFileModel = fileJsonToModel(object);
+            originFileList.add(object);
             String identifi = object.getString("identifi");
-//            if (Integer.valueOf(identifi) % 5 == 0)
-//                System.out.print(".");
-//            System.out.println(identifi);
+
+
+
+            System.out.println(".");
 //
-//            br.close();
-//            fileReader.close();
+            br.close();
+            fileReader.close();
 
         }
     }
 
-    public OriginFile fileJsonToModel(JSONObject object){
-        OriginFile fileModel = new OriginFile();
-        String identifi = object.getString("identifi");
+//    public OriginFile fileJsonToModel(JSONObject object){
+//        OriginFile fileModel = new OriginFile();
+//        String identifi = object.getString("identifi");
+//
+//        List<Doc> docs = new ArrayList<Doc>();
+//        JSONArray docsArray = object.getJSONArray("docs");
+//        for (int i = 0; i < docsArray.length(); i++){
+//            JSONObject docJson = docsArray.getJSONObject(i);
+//            Doc doc = new Doc();
+//            doc.setContent(docJson.getString("content"));
+//            doc.setDocNum(docJson.getString("docNum"));
+//            doc.buildLemmaList();
+//
+//            docs.add(doc);
+//        }
+//
+//        fileModel.setDocs(docs);
+//        fileModel.setIdentifi(identifi);
+//
+//        return fileModel;
+//    }
 
-        List<Doc> docs = new ArrayList<Doc>();
-        JSONArray docsArray = object.getJSONArray("docs");
-        for (int i = 0; i < docsArray.length(); i++){
-            JSONObject docJson = docsArray.getJSONObject(i);
-            Doc doc = new Doc();
-            doc.setContent(docJson.getString("content"));
-            doc.setDocNum(docJson.getString("docNum"));
-            doc.buildLemmaList();
-
-            docs.add(doc);
-        }
-
-        fileModel.setDocs(docs);
-        fileModel.setIdentifi(identifi);
-
-        return fileModel;
-    }
-
-    public List<OriginFile> getOriginFileList() {
+    public List<JSONObject> getOriginFileList() {
         return originFileList;
     }
 
-    public void printFileModel(int index){
-        OriginFile file = this.originFileList.get(index);
-        System.out.println(file.toString());
-
-    }
+//    public void printFileModel(int index){
+//        OriginFile file = this.originFileList.get(index);
+//        System.out.println(file.toString());
+//
+//    }
 }

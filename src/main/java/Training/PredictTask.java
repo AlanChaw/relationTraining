@@ -1,6 +1,7 @@
 package Training;
 
 import DealFile.OriginFile;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -9,12 +10,12 @@ import java.util.List;
  */
 public class PredictTask {
 
-    private List<OriginFile> originFileList;
+    private List<JSONObject> originFileList;
     private List<EntityPairExtend> entityPairsToPredict;
     private List<PointWordExtend> competeExtendedPointWords;
     private List<PointWordExtend> cooperateExtendedPointWords;
 
-    public void setOriginFileList(List<OriginFile> originFileList) {
+    public void setOriginFileList(List<JSONObject> originFileList) {
         this.originFileList = originFileList;
     }
 
@@ -22,7 +23,7 @@ public class PredictTask {
         this.entityPairsToPredict = entityPairsToPredict;
     }
 
-    public List<OriginFile> getOriginFileList() {
+    public List<JSONObject> getOriginFileList() {
         return originFileList;
     }
 

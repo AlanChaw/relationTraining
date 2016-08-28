@@ -7,6 +7,8 @@ import PointerWord.PointWord;
 import Training.ProcessPredict.DirectPredict;
 import Training.ProcessTraining.DirectSearchTraining;
 import net.sf.extjwnl.JWNLException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +19,10 @@ import java.util.Random;
  */
 public class Entry {
 
-    //训练集大小, 这里定义竞争和合作关系各取25个为训练集
-    private static final int TESTSETNUM = 5;
+    //测试集大小, 这里定义竞争和合作关系各取25个为测试集
+    private static final int TESTSETNUM = 25;
 
-    private List<OriginFile> originFileList;
+    private List<JSONObject> originFileList;
     private List<EntityPair> entityPairList;
 
     private List<PointWord> competePointWords;
@@ -38,7 +40,7 @@ public class Entry {
     public Entry() throws java.io.IOException, JWNLException{
 
         System.out.println("处理文档");
-        this.originFileList = new ArrayList<OriginFile>();
+        this.originFileList = new ArrayList<JSONObject>();
         this.originFileList = DealOriginFile.getInstance().getOriginFileList();
         this.entityPairList = new ArrayList<EntityPair>();
         this.entityPairList = DealIndexFile.getInstance().getEntityPairList();
@@ -74,6 +76,7 @@ public class Entry {
         //生成训练集和测试集
         generateTrainingAndTestSet_test();
 //        generateTrainingAndTestSet();
+
         //对每个训练集关系对进行训练
         trainEveryEntityPair();
         //用训练结果进行预测
@@ -82,7 +85,7 @@ public class Entry {
         doEstimate(predictTask);
 
     }
-
+//
     /**
      * 随机生成测试集和训练集
      * 取1/10为测试集,并保证测试集中竞争和合作关系对的数量相等
@@ -220,7 +223,7 @@ public class Entry {
             if (i < trainingSetCompete.size()){
                 entityPairExtend.setEntityPair(trainingSetCompete.get(i));
             }else {
-                entityPairExtend.setEntityPair(trainingSetCooperate.get(i - trainingSetCooperate.size()));
+                entityPairExtend.setEntityPair(trainingSetCooperate.get(i - trainingSetCompete.size()));
             }
             entityPairExtend.setPredictValue(0);
             entityPairsToPredict.add(entityPairExtend);
@@ -275,6 +278,29 @@ public class Entry {
         return 0.0;
     }
 
+    public static OriginFile fileJsonToModel(JSONObject object){
+        OriginFile fileModel = new OriginFile();
+        String identifi = object.getString("identifi");
+
+        List<Doc> docs = new ArrayList<Doc>();
+        JSONArray docsArray = object.getJSONArray("docs");
+        for (int i = 0; i < docsArray.length(); i++){
+            JSONObject docJson = docsArray.getJSONObject(i);
+            Doc doc = new Doc();
+            doc.setContent(docJson.getString("content"));
+            doc.setDocNum(docJson.getString("docNum"));
+            doc.buildLemmaList();
+
+            docs.add(doc);
+        }
+
+        fileModel.setDocs(docs);
+        fileModel.setIdentifi(identifi);
+
+        System.out.println("转换文档 " + identifi);
+
+        return fileModel;
+    }
 
 
 }

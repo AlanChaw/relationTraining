@@ -17,7 +17,7 @@ public class MainController {
         System.out.println("build ok");
 
         //最大文档编号
-        DealOriginFile.DOCNUM = 50;
+        DealOriginFile.DOCNUM = 500;
         //窗口长度
         DirectSearchTraining.WINDOWLENGTH = 200;
         //近义词树的深度
