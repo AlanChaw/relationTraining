@@ -1,6 +1,6 @@
-package Training;
+package Training.Model;
 
-import DealFile.EntityPair;
+import DealFile.Model.EntityPair;
 
 /**
  * Created by alan on 16/8/10.

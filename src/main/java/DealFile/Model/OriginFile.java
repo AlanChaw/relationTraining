@@ -1,4 +1,6 @@
-package DealFile;
+package DealFile.Model;
+
+import DealFile.Model.Doc;
 
 import java.util.List;
 

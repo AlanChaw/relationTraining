@@ -1,16 +1,20 @@
 package Training.ProcessPredict;
 
-import DealFile.Doc;
-import DealFile.Lemma;
-import DealFile.OriginFile;
-import Training.*;
+import DealFile.Model.Doc;
+import DealFile.Model.Lemma;
+import DealFile.Model.OriginFile;
+import Training.Filters.PredictFilter;
+import Training.Model.EntityPairExtend;
+import Training.Model.PointWordExtend;
+import Training.Model.PredictTask;
+import Training.ProcessTraining.HelpMethods;
 
 import java.util.List;
 
 /**
  * Created by alan on 16/8/10.
  */
-public class DirectPredict implements PredictFliter {
+public class DirectPredict implements PredictFilter {
 
     PredictTask predictTask;
 
@@ -27,7 +31,7 @@ public class DirectPredict implements PredictFliter {
 
     private void doPredict(EntityPairExtend entityPairExtend){
         Integer identifi = Integer.valueOf(entityPairExtend.getEntityPair().getIdentifi());
-        OriginFile originFile = Entry.fileJsonToModel(predictTask.getOriginFileList().get(identifi));
+        OriginFile originFile = HelpMethods.fileJsonToModel(predictTask.getOriginFileList().get(identifi));
         List<Doc> docs = originFile.getDocs();
 
         Double cooperateValue = 0.0;

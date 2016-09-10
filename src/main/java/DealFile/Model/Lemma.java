@@ -1,4 +1,4 @@
-package DealFile;
+package DealFile.Model;
 
 /**
  * Created by alan on 16/7/18.

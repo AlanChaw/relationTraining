@@ -1,14 +1,19 @@
 package Training;
 
 import DealFile.*;
+import DealFile.Model.EntityPair;
 import PointerWord.CompeteClosure;
 import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
+import Training.Filters.PredictFilter;
+import Training.Filters.TrainingFilter;
+import Training.Model.EntityPairExtend;
+import Training.Model.PointWordExtend;
+import Training.Model.PredictTask;
+import Training.Model.TrainingTask;
 import Training.ProcessPredict.DirectPredict;
-import Training.ProcessTraining.DirectSearchTraining;
-import Training.ProcessTraining.DirectSearchTraining2;
+import Training.ProcessTraining.PureTF2;
 import net.sf.extjwnl.JWNLException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -204,8 +209,8 @@ public class Entry {
      */
     private void trainEveryEntityPair(){
 
-//        TrainingFliter fliter = new DirectSearchTraining();
-        TrainingFliter fliter = new DirectSearchTraining2();
+//        TrainingFilter fliter = new PureTF();
+        TrainingFilter fliter = new PureTF2();
 
         TrainingTask trainingTask = new TrainingTask();
         trainingTask.setOriginFileList(originFileList);
@@ -235,7 +240,7 @@ public class Entry {
             entityPairsToPredict.add(entityPairExtend);
         }
 
-        PredictFliter fliter = new DirectPredict();
+        PredictFilter fliter = new DirectPredict();
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);
         predictTask.setCompeteExtendedPointWords(competeExtendedPonintWords);
@@ -261,20 +266,20 @@ public class Entry {
         Double recallCompete = caculateRecallCompete(predictTask);
         Double FOneValueCompete = caculateFOne(precisionCompete, recallCompete);
 
-//        System.out.println("准确率: " + accuracy);
-//        System.out.println("合作精确率: " + precisionCooperate);
-//        System.out.println("合作召回率: " + recallCooperate);
-//        System.out.println("合作F1值: " + FOneValueCooperate);
-//        System.out.println("竞争精确率: " + precisionCompete);
-//        System.out.println("竞争召回率: " + recallCompete);
-//        System.out.println("竞争F1值: " + FOneValueCompete);
-        System.out.println(accuracy);
-        System.out.println(precisionCooperate);
-        System.out.println(recallCooperate);
-        System.out.println(FOneValueCooperate);
-        System.out.println(precisionCompete);
-        System.out.println(recallCompete);
-        System.out.println(FOneValueCompete);
+        System.out.println("准确率: " + accuracy);
+        System.out.println("合作精确率: " + precisionCooperate);
+        System.out.println("合作召回率: " + recallCooperate);
+        System.out.println("合作F1值: " + FOneValueCooperate);
+        System.out.println("竞争精确率: " + precisionCompete);
+        System.out.println("竞争召回率: " + recallCompete);
+        System.out.println("竞争F1值: " + FOneValueCompete);
+//        System.out.println(accuracy);
+//        System.out.println(precisionCooperate);
+//        System.out.println(recallCooperate);
+//        System.out.println(FOneValueCooperate);
+//        System.out.println(precisionCompete);
+//        System.out.println(recallCompete);
+//        System.out.println(FOneValueCompete);
     }
 
     private Double caculateAccuracy(PredictTask predictTask){
@@ -349,33 +354,6 @@ public class Entry {
 
     private Double caculateFOne(Double precision, Double recall){
         return (2 * precision * recall) / (precision + recall);
-    }
-
-
-
-    public static OriginFile fileJsonToModel(JSONObject object){
-        OriginFile fileModel = new OriginFile();
-        String identifi = object.getString("identifi");
-
-        List<Doc> docs = new ArrayList<Doc>();
-        JSONArray docsArray = object.getJSONArray("docs");
-        for (int i = 0; i < docsArray.length(); i++){
-            JSONObject docJson = docsArray.getJSONObject(i);
-            Doc doc = new Doc();
-            doc.setContent(docJson.getString("content"));
-            doc.setDocNum(docJson.getString("docNum"));
-            doc.buildLemmaList();
-
-            docs.add(doc);
-        }
-
-        fileModel.setDocs(docs);
-        fileModel.setIdentifi(identifi);
-
-        System.out.println("转换文档 " + identifi);
-
-        return fileModel;
-
     }
 
 

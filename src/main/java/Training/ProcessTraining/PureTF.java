@@ -4,11 +4,14 @@ package Training.ProcessTraining;
  * Created by alan on 16/7/30.
  */
 
-import DealFile.Doc;
-import DealFile.EntityPair;
-import DealFile.Lemma;
-import DealFile.OriginFile;
-import Training.*;
+import DealFile.Model.Doc;
+import DealFile.Model.EntityPair;
+import DealFile.Model.Lemma;
+import DealFile.Model.OriginFile;
+import Training.Filters.TrainingFilter;
+import Training.Model.MatchSentence;
+import Training.Model.PointWordExtend;
+import Training.Model.TrainingTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +19,7 @@ import java.util.List;
 /**
  * v1.0 最简单的训练方法,用实体所在的句子,直接找出wordnet关键词
  */
-public class DirectSearchTraining implements TrainingFliter {
+public class PureTF implements TrainingFilter {
     public static int WINDOWLENGTH;
 
     protected TrainingTask trainingTask;
@@ -28,10 +31,9 @@ public class DirectSearchTraining implements TrainingFliter {
 
         for (EntityPair entityPair : task.getTrainingSet()){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-//            OriginFile originFile = task.getOriginFileList().get(identifi);
-            OriginFile originFile = Entry.fileJsonToModel(task.getOriginFileList().get(identifi));
+            OriginFile originFile = HelpMethods.fileJsonToModel(task.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
-                List<MatchSentence> sentences = findSentencesInDocs(doc, entityPair);
+                List<MatchSentence> sentences = HelpMethods.findSentencesInDocs(doc, entityPair);
                 sentencesNum += sentences.size();
                 doTheTraining(sentences, entityPair.getRelation());
 
@@ -40,45 +42,6 @@ public class DirectSearchTraining implements TrainingFliter {
         }
         doStatistic(sentencesNum);
         return 0;
-    }
-
-
-    /**********************核心部分*******************************/
-
-    /**
-     * 在某一关系对所出现的某一个文档中,找出在给定窗口长度下关系对中两个实体共同出现的句子
-     * @param doc   给定的文档
-     * @param entityPair    某一特定的实体对
-     * @return 在该文档中所有匹配的句子
-     */
-    public List<MatchSentence> findSentencesInDocs(Doc doc, EntityPair entityPair){
-        List<MatchSentence> sentences = new ArrayList<MatchSentence>();
-
-        //遍历整个文档,直接检索,找到实体词出现的位置
-        for (int i = 0; i < doc.getLemmaList().size(); i++){
-            Lemma lemma = doc.getLemmaList().get(i);
-            if (lemma.getLemma().equals(entityPair.getEntityName_1())){
-                //该词窗口的下界
-                Integer lowerBound = (i >= WINDOWLENGTH) ? (i - WINDOWLENGTH) : 0;
-                //该词窗口的上界(实际是下标,便于操作)
-                Integer upperBound = ((i + WINDOWLENGTH + 1) <= doc.getLemmaList().size()) ? (i + WINDOWLENGTH) : (doc.getLemmaList().size() - 1);
-
-                //设置句子
-                MatchSentence sentence = new MatchSentence();
-                sentence.setRelation(entityPair.getRelation());
-                for (int j = lowerBound; j <= upperBound; j++){
-                    sentence.addLemma(doc.getLemmaList().get(j));
-                }
-
-                //检索句子中是否有另一个实体词,如果有则保留
-                for (int j = 0; j < sentence.getLemmas().size(); j++){
-                    if (sentence.getLemmas().get(j).getLemma().equals(entityPair.getEntityName_2()))
-                        sentences.add(sentence);
-                }
-            }
-
-        }
-        return sentences;
     }
 
     /**

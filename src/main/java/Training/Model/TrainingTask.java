@@ -1,7 +1,6 @@
-package Training;
+package Training.Model;
 
-import DealFile.EntityPair;
-import DealFile.OriginFile;
+import DealFile.Model.EntityPair;
 import org.json.JSONObject;
 
 import java.util.List;

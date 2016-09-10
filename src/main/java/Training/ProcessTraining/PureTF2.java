@@ -1,11 +1,8 @@
 package Training.ProcessTraining;
 
-import DealFile.Lemma;
-import PointerWord.PointWord;
-import Training.MatchSentence;
-import Training.PointWordExtend;
-import Training.TrainingTask;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
+import DealFile.Model.Lemma;
+import Training.Model.MatchSentence;
+import Training.Model.PointWordExtend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +10,7 @@ import java.util.List;
 /**
  * Created by alan on 16/8/28.
  */
-public class DirectSearchTraining2 extends DirectSearchTraining {
+public class PureTF2 extends PureTF {
 
 
     @Override

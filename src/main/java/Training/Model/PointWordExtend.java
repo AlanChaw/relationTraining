@@ -1,4 +1,4 @@
-package Training;
+package Training.Model;
 
 import PointerWord.PointWord;
 

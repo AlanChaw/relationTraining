@@ -1,6 +1,7 @@
-package Training;
+package Training.Model;
 
-import DealFile.OriginFile;
+import Training.Model.EntityPairExtend;
+import Training.Model.PointWordExtend;
 import org.json.JSONObject;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package Training;
+package Training.Model;
 
-import DealFile.Lemma;
+import DealFile.Model.Lemma;
 
 import java.util.ArrayList;
 import java.util.List;
