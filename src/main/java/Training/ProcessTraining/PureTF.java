@@ -49,7 +49,7 @@ public class PureTF implements TrainingFilter {
      * @param sentences
      * @param relation
      */
-    public void doTheTraining(List<MatchSentence> sentences, Integer relation){
+    protected void doTheTraining(List<MatchSentence> sentences, Integer relation){
         List<PointWordExtend> pointWordList = new ArrayList<PointWordExtend>();
 
         pointWordList = trainingTask.getPointWordExtendList();
@@ -72,7 +72,7 @@ public class PureTF implements TrainingFilter {
     /**
      * 经过训练后,对每个指示词在句子中出现的频率统计,计算statisticValue
      */
-    public void doStatistic(Integer sentencesNum) {
+    protected void doStatistic(Integer sentencesNum) {
 
         System.out.println("两实体共同出现的句子: " + sentencesNum + "条");
         for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
@@ -86,8 +86,12 @@ public class PureTF implements TrainingFilter {
         for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
             wordNum += pointWordExtend.getAppearCount();
         }
+        caculateValue(trainingTask.getPointWordExtendList(), wordNum);
 
-        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+    }
+
+    protected void caculateValue(List<PointWordExtend> list, Integer wordNum){
+        for (PointWordExtend pointWordExtend : list) {
             if (pointWordExtend.getAppearCount() > 0){
                 Double statisticValue = (double)pointWordExtend.getAppearCount() / wordNum;
                 pointWordExtend.setStatisticValue(statisticValue);
@@ -96,8 +100,6 @@ public class PureTF implements TrainingFilter {
             }
 
         }
-
-
     }
 
 

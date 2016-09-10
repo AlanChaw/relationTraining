@@ -47,13 +47,7 @@ public class PureTF2 extends PureTF {
         }
         System.out.println("------------------");
 
-        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()){
-            if (pointWordExtend.getAppearCount() > 0){
-                Double statisticValue = (double)pointWordExtend.getAppearCount() / sentencesNum;
-                pointWordExtend.setStatisticValue(statisticValue);
-                System.out.println(pointWordExtend.toString());
-            }
-        }
+        caculateValue(trainingTask.getPointWordExtendList(), sentencesNum);
 
     }
 }
