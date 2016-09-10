@@ -19,7 +19,7 @@ import java.util.List;
 public class DirectSearchTraining implements TrainingFliter {
     public static int WINDOWLENGTH;
 
-    private TrainingTask trainingTask;
+    protected TrainingTask trainingTask;
 
     public int handleTraining(TrainingTask task) {
         this.trainingTask = task;
@@ -88,12 +88,7 @@ public class DirectSearchTraining implements TrainingFliter {
      */
     public void doTheTraining(List<MatchSentence> sentences, Integer relation){
         List<PointWordExtend> pointWordList = new ArrayList<PointWordExtend>();
-//        if (relation < 0){
-//            pointWordList = competeExtendedPonintWords;
-//        }
-//        else {
-//            pointWordList = cooperateExtendedPointWords;
-//        }
+
         pointWordList = trainingTask.getPointWordExtendList();
 
         for (MatchSentence sentence : sentences){

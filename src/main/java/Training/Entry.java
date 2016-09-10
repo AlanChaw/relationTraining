@@ -6,6 +6,7 @@ import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
 import Training.ProcessPredict.DirectPredict;
 import Training.ProcessTraining.DirectSearchTraining;
+import Training.ProcessTraining.DirectSearchTraining2;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -74,8 +75,8 @@ public class Entry {
         }
 
         //生成训练集和测试集
-        generateTrainingAndTestSet_test();
-//        generateTrainingAndTestSet();
+//        generateTrainingAndTestSet_test();
+        generateTrainingAndTestSet();
 
         //对每个训练集关系对进行训练
         trainEveryEntityPair();
@@ -203,7 +204,9 @@ public class Entry {
      */
     private void trainEveryEntityPair(){
 
-        TrainingFliter fliter = new DirectSearchTraining();
+//        TrainingFliter fliter = new DirectSearchTraining();
+        TrainingFliter fliter = new DirectSearchTraining2();
+
         TrainingTask trainingTask = new TrainingTask();
         trainingTask.setOriginFileList(originFileList);
         trainingTask.setPointWordExtendList(competeExtendedPonintWords);
@@ -214,16 +217,19 @@ public class Entry {
         trainingTask.setTrainingSet(trainingSetCooperate);
         fliter.handleTraining(trainingTask);
 
+        String test = "12345";
+        test = test.substring(2);
+
     }
 
     private PredictTask doPredict(){
         List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();
-        for (int i = 0; i < trainingSetCompete.size() + trainingSetCooperate.size(); i++){
+        for (int i = 0; i < testSetCompete.size() + testSetCooperate.size(); i++){
             EntityPairExtend entityPairExtend = new EntityPairExtend();
-            if (i < trainingSetCompete.size()){
-                entityPairExtend.setEntityPair(trainingSetCompete.get(i));
+            if (i < testSetCompete.size()){
+                entityPairExtend.setEntityPair(testSetCompete.get(i));
             }else {
-                entityPairExtend.setEntityPair(trainingSetCooperate.get(i - trainingSetCompete.size()));
+                entityPairExtend.setEntityPair(testSetCooperate.get(i - testSetCompete.size()));
             }
             entityPairExtend.setPredictValue(0);
             entityPairsToPredict.add(entityPairExtend);
@@ -243,12 +249,32 @@ public class Entry {
     private void doEstimate(PredictTask predictTask){
         //计算准确率
         Double accuracy = caculateAccuracy(predictTask);
-        //计算精确率
-        Double precision = caculatePrecision(predictTask);
-        //计算召回率
-        Double recall = caculateRecall(predictTask);
+        //计算精确率(合作)
+        Double precisionCooperate = caculatePrecisionCooperate(predictTask);
+        //计算召回率(合作)
+        Double recallCooperate = caculateRecallCooperate(predictTask);
+        //计算F1值(合作)
+        Double FOneValueCooperate = caculateFOne(precisionCooperate, recallCooperate);
 
-        System.out.println("准确率: " + accuracy);
+
+        Double precisionCompete = caculatePrecisionCompete(predictTask);
+        Double recallCompete = caculateRecallCompete(predictTask);
+        Double FOneValueCompete = caculateFOne(precisionCompete, recallCompete);
+
+//        System.out.println("准确率: " + accuracy);
+//        System.out.println("合作精确率: " + precisionCooperate);
+//        System.out.println("合作召回率: " + recallCooperate);
+//        System.out.println("合作F1值: " + FOneValueCooperate);
+//        System.out.println("竞争精确率: " + precisionCompete);
+//        System.out.println("竞争召回率: " + recallCompete);
+//        System.out.println("竞争F1值: " + FOneValueCompete);
+        System.out.println(accuracy);
+        System.out.println(precisionCooperate);
+        System.out.println(recallCooperate);
+        System.out.println(FOneValueCooperate);
+        System.out.println(precisionCompete);
+        System.out.println(recallCompete);
+        System.out.println(FOneValueCompete);
     }
 
     private Double caculateAccuracy(PredictTask predictTask){
@@ -266,17 +292,66 @@ public class Entry {
         return (double)correctNum / allNum;
     }
 
-    private Double caculatePrecision(PredictTask predictTask){
+    private Double caculatePrecisionCooperate(PredictTask predictTask){
+        Integer cooperateNumPredict = 0;
+        Integer cooperateNum = 0;
+        for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
+            if (entityPairExtend.getPredictValue() == 1){
+                cooperateNumPredict++;
+                if (entityPairExtend.getEntityPair().getRelation() == 1){
+                    cooperateNum++;
+                }
+            }
 
+        }
 
-        return 0.0;
+        //真实值为合作的关系对占预测为合作的关系对的比例
+        return (double)cooperateNum / cooperateNumPredict;
     }
 
-    private Double caculateRecall(PredictTask predictTask){
+    private Double caculateRecallCooperate(PredictTask predictTask){
+        Integer cooperateNum = 0;
+        for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
+            if (entityPairExtend.getPredictValue() == 1 && entityPairExtend.getEntityPair().getRelation() == 1){
+                cooperateNum++;
+            }
+        }
 
-
-        return 0.0;
+        //预测为合作且正确的关系对占真实值为合作的关系对的比例
+        return (double)cooperateNum / TESTSETNUM;
     }
+
+    private Double caculatePrecisionCompete(PredictTask predictTask){
+        Integer competeNumPredict = 0;
+        Integer competeNum = 0;
+        for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
+            if (entityPairExtend.getPredictValue() == -1){
+                competeNumPredict++;
+                if (entityPairExtend.getEntityPair().getRelation() == -1){
+                    competeNum++;
+                }
+            }
+
+        }
+        return (double)competeNum / competeNumPredict;
+
+    }
+
+    private Double caculateRecallCompete(PredictTask predictTask){
+        Integer competeNum = 0;
+        for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
+            if (entityPairExtend.getPredictValue() == -1 && entityPairExtend.getEntityPair().getRelation() == -1){
+                competeNum++;
+            }
+        }
+        return (double)competeNum / TESTSETNUM;
+    }
+
+    private Double caculateFOne(Double precision, Double recall){
+        return (2 * precision * recall) / (precision + recall);
+    }
+
+
 
     public static OriginFile fileJsonToModel(JSONObject object){
         OriginFile fileModel = new OriginFile();
@@ -300,6 +375,7 @@ public class Entry {
         System.out.println("转换文档 " + identifi);
 
         return fileModel;
+
     }
 
 
