@@ -14,15 +14,7 @@ public class PureTF2 extends PureTF {
 
 
     @Override
-    public void doTheTraining(List<MatchSentence> sentences, Integer relation) {
-        List<PointWordExtend> pointWordList = new ArrayList<PointWordExtend>();
-//        if (relation < 0){
-//            pointWordList = competeExtendedPonintWords;
-//        }
-//        else {
-//            pointWordList = cooperateExtendedPointWords;
-//        }
-        pointWordList = trainingTask.getPointWordExtendList();
+    public void doTheTraining(List<MatchSentence> sentences, List<PointWordExtend> pointWordList) {
         for (MatchSentence sentence : sentences){
             for (PointWordExtend wordExtend : pointWordList){
                 for (Lemma lemma : sentence.getLemmas()){
@@ -38,16 +30,15 @@ public class PureTF2 extends PureTF {
     }
 
     @Override
-    public void doStatistic(Integer sentencesNum) {
+    public void doStatistic(Integer sentencesNum, List<PointWordExtend> pointWordExtendList) {
         System.out.println("两实体共同出现的句子: " + sentencesNum + "条");
-        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+        for (PointWordExtend pointWordExtend : pointWordExtendList) {
             if (pointWordExtend.getAppearCount() > 0) {
                 System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现: " + pointWordExtend.getAppearCount() + " 次");
             }
         }
         System.out.println("------------------");
 
-        caculateValue(trainingTask.getPointWordExtendList(), sentencesNum);
-
+        caculateValue(pointWordExtendList, sentencesNum);
     }
 }

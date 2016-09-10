@@ -9,31 +9,51 @@ import java.util.List;
  * Created by alan on 16/7/30.
  */
 public class TrainingTask {
-    private List<EntityPair> trainingSet;
     private List<JSONObject> originFileList;
-    private List<PointWordExtend> pointWordExtendList;
 
-    public List<EntityPair> getTrainingSet() {
-        return trainingSet;
+    private List<EntityPair> trainingSetCompete;
+    private List<PointWordExtend> pointWordExtendListCompete;
+
+    private List<EntityPair> trainingSetCooperate;
+    private List<PointWordExtend> pointWordExtendListCooperate;
+
+    public void setOriginFileList(List<JSONObject> originFileList) {
+        this.originFileList = originFileList;
     }
 
     public List<JSONObject> getOriginFileList() {
         return originFileList;
     }
 
-    public List<PointWordExtend> getPointWordExtendList() {
-        return pointWordExtendList;
+    public void setTrainingSetCompete(List<EntityPair> trainingSetCompete) {
+        this.trainingSetCompete = trainingSetCompete;
     }
 
-    public void setOriginFileList(List<JSONObject> originFileList) {
-        this.originFileList = originFileList;
+    public List<EntityPair> getTrainingSetCompete() {
+        return trainingSetCompete;
     }
 
-    public void setPointWordExtendList(List<PointWordExtend> pointWordExtendList) {
-        this.pointWordExtendList = pointWordExtendList;
+    public void setPointWordExtendListCompete(List<PointWordExtend> pointWordExtendListCompete) {
+        this.pointWordExtendListCompete = pointWordExtendListCompete;
     }
 
-    public void setTrainingSet(List<EntityPair> trainingSet) {
-        this.trainingSet = trainingSet;
+    public List<PointWordExtend> getPointWordExtendListCompete() {
+        return pointWordExtendListCompete;
+    }
+
+    public void setTrainingSetCooperate(List<EntityPair> trainingSetCooperate) {
+        this.trainingSetCooperate = trainingSetCooperate;
+    }
+
+    public List<EntityPair> getTrainingSetCooperate() {
+        return trainingSetCooperate;
+    }
+
+    public void setPointWordExtendListCooperate(List<PointWordExtend> pointWordExtendListCooperate) {
+        this.pointWordExtendListCooperate = pointWordExtendListCooperate;
+    }
+
+    public List<PointWordExtend> getPointWordExtendListCooperate() {
+        return pointWordExtendListCooperate;
     }
 }

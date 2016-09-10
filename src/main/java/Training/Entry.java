@@ -11,7 +11,9 @@ import Training.Model.EntityPairExtend;
 import Training.Model.PointWordExtend;
 import Training.Model.PredictTask;
 import Training.Model.TrainingTask;
-import Training.ProcessPredict.DirectPredict;
+import Training.ProcessPredict.PureTFPredict;
+import Training.ProcessTraining.PureIDF;
+import Training.ProcessTraining.PureTF;
 import Training.ProcessTraining.PureTF2;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
@@ -209,21 +211,19 @@ public class Entry {
      */
     private void trainEveryEntityPair(){
 
-//        TrainingFilter fliter = new PureTF();
-        TrainingFilter fliter = new PureTF2();
+//        TrainingFilter filter = new PureTF();
+//        TrainingFilter filter = new PureTF2();
+        TrainingFilter filter = new PureIDF();
 
         TrainingTask trainingTask = new TrainingTask();
         trainingTask.setOriginFileList(originFileList);
-        trainingTask.setPointWordExtendList(competeExtendedPonintWords);
-        trainingTask.setTrainingSet(trainingSetCompete);
-        fliter.handleTraining(trainingTask);
 
-        trainingTask.setPointWordExtendList(cooperateExtendedPointWords);
-        trainingTask.setTrainingSet(trainingSetCooperate);
-        fliter.handleTraining(trainingTask);
+        trainingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
+        trainingTask.setTrainingSetCompete(trainingSetCompete);
+        trainingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
+        trainingTask.setTrainingSetCooperate(trainingSetCooperate);
 
-        String test = "12345";
-        test = test.substring(2);
+        filter.handleTraining(trainingTask);
 
     }
 
@@ -240,12 +240,13 @@ public class Entry {
             entityPairsToPredict.add(entityPairExtend);
         }
 
-        PredictFilter fliter = new DirectPredict();
+        PredictFilter fliter = new PureTFPredict();
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);
         predictTask.setCompeteExtendedPointWords(competeExtendedPonintWords);
         predictTask.setCooperateExtendedPointWords(cooperateExtendedPointWords);
         predictTask.setEntityPairsToPredict(entityPairsToPredict);
+
         fliter.handlePredict(predictTask);
 
         return predictTask;

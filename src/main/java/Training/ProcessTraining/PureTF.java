@@ -26,22 +26,45 @@ public class PureTF implements TrainingFilter {
 
     public int handleTraining(TrainingTask task) {
         this.trainingTask = task;
+        handleTrainingCompete(trainingTask.getTrainingSetCompete());
+        handleTrainingCooperate(trainingTask.getTrainingSetCooperate());
+        return 0;
+    }
+
+    protected void handleTrainingCompete(List<EntityPair> trainingSetCompete){
 
         Integer sentencesNum = 0;
 
-        for (EntityPair entityPair : task.getTrainingSet()){
+        for (EntityPair entityPair : trainingSetCompete){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-            OriginFile originFile = HelpMethods.fileJsonToModel(task.getOriginFileList().get(identifi));
+            OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = HelpMethods.findSentencesInDocs(doc, entityPair);
                 sentencesNum += sentences.size();
-                doTheTraining(sentences, entityPair.getRelation());
+                doTheTraining(sentences, trainingTask.getPointWordExtendListCompete());
 
             }
 
         }
-        doStatistic(sentencesNum);
-        return 0;
+        doStatistic(sentencesNum, trainingTask.getPointWordExtendListCompete());
+
+    }
+
+    protected void handleTrainingCooperate(List<EntityPair> trainingSetCooperate){
+        Integer sentencesNum = 0;
+
+        for (EntityPair entityPair : trainingSetCooperate){
+            Integer identifi = Integer.valueOf(entityPair.getIdentifi());
+            OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
+            for (Doc doc : originFile.getDocs()){
+                List<MatchSentence> sentences = HelpMethods.findSentencesInDocs(doc, entityPair);
+                sentencesNum += sentences.size();
+                doTheTraining(sentences, trainingTask.getPointWordExtendListCooperate());
+
+            }
+
+        }
+        doStatistic(sentencesNum, trainingTask.getPointWordExtendListCooperate());
     }
 
     /**
@@ -49,11 +72,7 @@ public class PureTF implements TrainingFilter {
      * @param sentences
      * @param relation
      */
-    protected void doTheTraining(List<MatchSentence> sentences, Integer relation){
-        List<PointWordExtend> pointWordList = new ArrayList<PointWordExtend>();
-
-        pointWordList = trainingTask.getPointWordExtendList();
-
+    protected void doTheTraining(List<MatchSentence> sentences, List<PointWordExtend> pointWordList){
         for (MatchSentence sentence : sentences){
             for (Lemma lemma : sentence.getLemmas()){
                 for (PointWordExtend word : pointWordList){
@@ -72,10 +91,10 @@ public class PureTF implements TrainingFilter {
     /**
      * 经过训练后,对每个指示词在句子中出现的频率统计,计算statisticValue
      */
-    protected void doStatistic(Integer sentencesNum) {
+    protected void doStatistic(Integer sentencesNum, List<PointWordExtend> pointWordExtendList) {
 
         System.out.println("两实体共同出现的句子: " + sentencesNum + "条");
-        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+        for (PointWordExtend pointWordExtend : pointWordExtendList) {
             if (pointWordExtend.getAppearCount() > 0) {
                 System.out.println("词汇 " + pointWordExtend.getPointWord().getLemma() + " 出现: " + pointWordExtend.getAppearCount() + " 次");
             }
@@ -83,19 +102,20 @@ public class PureTF implements TrainingFilter {
         System.out.println("------------------");
 
         Integer wordNum = 0;
-        for (PointWordExtend pointWordExtend : trainingTask.getPointWordExtendList()) {
+        for (PointWordExtend pointWordExtend : pointWordExtendList) {
             wordNum += pointWordExtend.getAppearCount();
         }
-        caculateValue(trainingTask.getPointWordExtendList(), wordNum);
+        caculateValue(pointWordExtendList, wordNum);
 
     }
 
     protected void caculateValue(List<PointWordExtend> list, Integer wordNum){
         for (PointWordExtend pointWordExtend : list) {
             if (pointWordExtend.getAppearCount() > 0){
-                Double statisticValue = (double)pointWordExtend.getAppearCount() / wordNum;
-                pointWordExtend.setStatisticValue(statisticValue);
-
+                Double termFrequency = (double)pointWordExtend.getAppearCount() / wordNum;
+                pointWordExtend.setTermFrequency(termFrequency);
+                //把统计值直接设置为TF的值
+                pointWordExtend.setStatisticValue(termFrequency);
                 System.out.println(pointWordExtend.toString());
             }
 

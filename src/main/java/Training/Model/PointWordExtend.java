@@ -12,12 +12,21 @@ public class PointWordExtend {
 
     private PointWord pointWord;
     private Double statisticValue;
-    private Integer appearCount;
+
+    //TF
+    private Double termFrequency;
+    private Integer appearCount = 0;
+    //IDF
+    private Double inverseDocumentFrequency;
+    private Integer Dw = 0;
 
     public PointWordExtend(PointWord pointWord){
         this.pointWord = pointWord;
         this.statisticValue = 0.0;
         this.appearCount = 0;
+
+        this.termFrequency = 0.0;
+        this.inverseDocumentFrequency = 0.0;
     }
 
     public void setPointWord(PointWord pointWord) {
@@ -36,6 +45,23 @@ public class PointWordExtend {
         return statisticValue;
     }
 
+
+    public void setTermFrequency(Double termFrequency) {
+        this.termFrequency = termFrequency;
+    }
+
+    public Double getTermFrequency() {
+        return termFrequency;
+    }
+
+    public void setInverseDocumentFrequency(Double inverseDocumentFrequency) {
+        this.inverseDocumentFrequency = inverseDocumentFrequency;
+    }
+
+    public Double getInverseDocumentFrequency() {
+        return inverseDocumentFrequency;
+    }
+
     public Integer getAppearCount() {
         return appearCount;
     }
@@ -44,8 +70,16 @@ public class PointWordExtend {
         return pointWord;
     }
 
+    public void setDw(Integer dw) {
+        Dw = dw;
+    }
+
+    public Integer getDw() {
+        return Dw;
+    }
+
     @Override
     public String toString() {
-        return "word : " + pointWord + "\t" + "statisticValue : " + statisticValue + "\t" + "count : " + appearCount;
+        return "word : " + pointWord + "\t" + "statisticValue : " + statisticValue + "\t" + "count : " + Dw;
     }
 }

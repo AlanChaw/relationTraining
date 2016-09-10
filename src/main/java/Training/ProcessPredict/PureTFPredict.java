@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by alan on 16/8/10.
  */
-public class DirectPredict implements PredictFilter {
+public class PureTFPredict implements PredictFilter {
 
     PredictTask predictTask;
 
@@ -40,17 +40,17 @@ public class DirectPredict implements PredictFilter {
         for (Doc doc : docs){
             for (Lemma docLemma : doc.getLemmaList()){
                 for (PointWordExtend pointWordExtend : predictTask.getCompeteExtendedPointWords()){
-                    if (pointWordExtend.getAppearCount() == 0){
-                        continue;
-                    }
+//                    if (pointWordExtend.getAppearCount() == 0){
+//                        continue;
+//                    }
                     if (pointWordExtend.getPointWord().getLemma().equals(docLemma.getLemma())){
                         competeValue += pointWordExtend.getStatisticValue();
                     }
                 }
                 for (PointWordExtend pointWordExtend : predictTask.getCooperateExtendedPointWords()){
-                    if (pointWordExtend.getAppearCount() == 0){
-                        continue;
-                    }
+//                    if (pointWordExtend.getAppearCount() == 0){
+//                        continue;
+//                    }
                     if (pointWordExtend.getPointWord().getLemma().equals(docLemma.getLemma())){
                         cooperateValue += pointWordExtend.getStatisticValue();
                     }
