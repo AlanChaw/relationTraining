@@ -15,6 +15,7 @@ import Training.ProcessPredict.PureTFPredict;
 import Training.ProcessTraining.PureIDF;
 import Training.ProcessTraining.PureTF;
 import Training.ProcessTraining.PureTF2;
+import Training.ProcessTraining.TF_IDF;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
@@ -214,6 +215,7 @@ public class Entry {
 //        TrainingFilter filter = new PureTF();
 //        TrainingFilter filter = new PureTF2();
         TrainingFilter filter = new PureIDF();
+//        TrainingFilter filter = new TF_IDF();
 
         TrainingTask trainingTask = new TrainingTask();
         trainingTask.setOriginFileList(originFileList);
@@ -267,20 +269,20 @@ public class Entry {
         Double recallCompete = caculateRecallCompete(predictTask);
         Double FOneValueCompete = caculateFOne(precisionCompete, recallCompete);
 
-        System.out.println("准确率: " + accuracy);
-        System.out.println("合作精确率: " + precisionCooperate);
-        System.out.println("合作召回率: " + recallCooperate);
-        System.out.println("合作F1值: " + FOneValueCooperate);
-        System.out.println("竞争精确率: " + precisionCompete);
-        System.out.println("竞争召回率: " + recallCompete);
-        System.out.println("竞争F1值: " + FOneValueCompete);
-//        System.out.println(accuracy);
-//        System.out.println(precisionCooperate);
-//        System.out.println(recallCooperate);
-//        System.out.println(FOneValueCooperate);
-//        System.out.println(precisionCompete);
-//        System.out.println(recallCompete);
-//        System.out.println(FOneValueCompete);
+//        System.out.println("准确率: " + accuracy);
+//        System.out.println("合作精确率: " + precisionCooperate);
+//        System.out.println("合作召回率: " + recallCooperate);
+//        System.out.println("合作F1值: " + FOneValueCooperate);
+//        System.out.println("竞争精确率: " + precisionCompete);
+//        System.out.println("竞争召回率: " + recallCompete);
+//        System.out.println("竞争F1值: " + FOneValueCompete);
+        System.out.println(accuracy);
+        System.out.println(precisionCooperate);
+        System.out.println(recallCooperate);
+        System.out.println(FOneValueCooperate);
+        System.out.println(precisionCompete);
+        System.out.println(recallCompete);
+        System.out.println(FOneValueCompete);
     }
 
     private Double caculateAccuracy(PredictTask predictTask){

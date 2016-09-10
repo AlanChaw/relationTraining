@@ -25,12 +25,12 @@ public class PureIDF implements TrainingFilter {
         this.trainingTask = task;
         List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
 
-        List<EntityPair> allEntityPairs;
-        allEntityPairs = this.trainingTask.getTrainingSetCompete();
+        List<EntityPair> allEntityPairs = new ArrayList<EntityPair>();
+        allEntityPairs.addAll(this.trainingTask.getTrainingSetCompete());
         allEntityPairs.addAll(this.trainingTask.getTrainingSetCooperate());
 
-        List<PointWordExtend> allPointWords;
-        allPointWords = trainingTask.getPointWordExtendListCompete();
+        List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
+        allPointWords.addAll(trainingTask.getPointWordExtendListCompete());
         allPointWords.addAll(trainingTask.getPointWordExtendListCooperate());
 
         for (EntityPair entityPair : allEntityPairs){
