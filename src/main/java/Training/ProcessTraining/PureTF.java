@@ -39,7 +39,7 @@ public class PureTF implements TrainingFilter {
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
             OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
-                List<MatchSentence> sentences = HelpMethods.findSentencesInDocs(doc, entityPair);
+                List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 sentencesNum += sentences.size();
                 doTheTraining(sentences, trainingTask.getPointWordExtendListCompete());
 
@@ -57,7 +57,7 @@ public class PureTF implements TrainingFilter {
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
             OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
-                List<MatchSentence> sentences = HelpMethods.findSentencesInDocs(doc, entityPair);
+                List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 sentencesNum += sentences.size();
                 doTheTraining(sentences, trainingTask.getPointWordExtendListCooperate());
 

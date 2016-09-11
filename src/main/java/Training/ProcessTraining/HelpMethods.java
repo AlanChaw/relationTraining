@@ -54,7 +54,7 @@ public class HelpMethods {
      * @param entityPair    某一特定的实体对
      * @return 在该文档中所有匹配的句子
      */
-    public static List<MatchSentence> findSentencesInDocs(Doc doc, EntityPair entityPair){
+    public static List<MatchSentence> findSentencesInDoc(Doc doc, EntityPair entityPair){
         List<MatchSentence> sentences = new ArrayList<MatchSentence>();
 
         //遍历整个文档,直接检索,找到实体词出现的位置

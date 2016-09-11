@@ -37,7 +37,7 @@ public class PureIDF implements TrainingFilter {
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
             OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
-                List<MatchSentence> sentences = HelpMethods.findSentencesInDocs(doc, entityPair);
+                List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 allSentences.addAll(sentences);
                 D += sentences.size();
             }

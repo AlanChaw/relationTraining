@@ -5,10 +5,12 @@ import DealFile.Model.Lemma;
 import DealFile.Model.OriginFile;
 import Training.Filters.PredictFilter;
 import Training.Model.EntityPairExtend;
+import Training.Model.MatchSentence;
 import Training.Model.PointWordExtend;
 import Training.Model.PredictTask;
 import Training.ProcessTraining.HelpMethods;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +27,6 @@ public class PureTFPredict implements PredictFilter {
             doPredict(entityPairExtend);
         }
 
-
         return 0;
     }
 
@@ -38,22 +39,18 @@ public class PureTFPredict implements PredictFilter {
         Double competeValue = 0.0;
 
         for (Doc doc : docs){
-            for (Lemma docLemma : doc.getLemmaList()){
-                for (PointWordExtend pointWordExtend : predictTask.getCompeteExtendedPointWords()){
-//                    if (pointWordExtend.getAppearCount() == 0){
-//                        continue;
-//                    }
-                    if (pointWordExtend.getPointWord().getLemma().equals(docLemma.getLemma())){
-                        competeValue += pointWordExtend.getStatisticValue();
+            List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPairExtend.getEntityPair());
+            for (MatchSentence sentence : sentences){
+                for (Lemma sentenceLemma : sentence.getLemmas()){
+                    for (PointWordExtend pointWordExtend : predictTask.getCompeteExtendedPointWords()){
+                        if (pointWordExtend.getPointWord().getLemma().equals(sentenceLemma.getLemma()))
+                            competeValue += pointWordExtend.getStatisticValue();
                     }
-                }
-                for (PointWordExtend pointWordExtend : predictTask.getCooperateExtendedPointWords()){
-//                    if (pointWordExtend.getAppearCount() == 0){
-//                        continue;
-//                    }
-                    if (pointWordExtend.getPointWord().getLemma().equals(docLemma.getLemma())){
-                        cooperateValue += pointWordExtend.getStatisticValue();
+                    for (PointWordExtend pointWordExtend : predictTask.getCooperateExtendedPointWords()){
+                        if (pointWordExtend.getPointWord().getLemma().equals(sentenceLemma.getLemma()))
+                            cooperateValue += pointWordExtend.getStatisticValue();
                     }
+
                 }
             }
         }

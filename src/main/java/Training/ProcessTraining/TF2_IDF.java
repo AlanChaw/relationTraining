@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by alan on 16/9/10.
+ * Created by alan on 16/9/11.
  */
-public class TF_IDF implements TrainingFilter {
+public class TF2_IDF implements TrainingFilter {
 
 
     public int handleTraining(TrainingTask task) {
-        TrainingFilter TFFilter = new PureTF();
+
+        TrainingFilter TFFilter = new PureTF2();
         TrainingFilter IDFFilter = new PureIDF();
 
         TFFilter.handleTraining(task);
@@ -31,4 +32,7 @@ public class TF_IDF implements TrainingFilter {
 
         return 0;
     }
+
+
+
 }
