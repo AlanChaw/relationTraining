@@ -19,7 +19,7 @@ public class MainController {
         //最大文档编号
         DealOriginFile.DOCNUM = 500;
         //窗口长度
-        PureTF.WINDOWLENGTH = 500;
+        PureTF.WINDOWLENGTH = 200;
         //近义词树的深度
         PointWordClosure.DEPTH = 2;
         //递减因子

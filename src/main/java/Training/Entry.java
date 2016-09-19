@@ -211,9 +211,11 @@ public class Entry {
 
 //        TrainingFilter filter = new PureTF();
 //        TrainingFilter filter = new PureTF2();
-        TrainingFilter filter = new PureIDF();
+//        TrainingFilter filter = new PureIDF();
 //        TrainingFilter filter = new TF_IDF();
 //        TrainingFilter filter = new TF2_IDF();
+//        TrainingFilter filter = new PureIWF();
+        TrainingFilter filter = new TF_IWF();
 
         TrainingTask trainingTask = new TrainingTask();
         trainingTask.setOriginFileList(originFileList);

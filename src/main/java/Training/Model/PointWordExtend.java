@@ -19,6 +19,10 @@ public class PointWordExtend {
     //IDF
     private Double inverseDocumentFrequency;
     private Integer Dw = 0;
+    //IWF
+    private Double inverseWordFrequency;
+    private Integer allAppearCount = 0;
+
 
     public PointWordExtend(PointWord pointWord){
         this.pointWord = pointWord;
@@ -76,6 +80,22 @@ public class PointWordExtend {
 
     public Integer getDw() {
         return Dw;
+    }
+
+    public void setAllAppearCount(Integer allAppearCount) {
+        this.allAppearCount = allAppearCount;
+    }
+
+    public Integer getAllAppearCount() {
+        return allAppearCount;
+    }
+
+    public void setInverseWordFrequency(Double inverseWordFrequency) {
+        this.inverseWordFrequency = inverseWordFrequency;
+    }
+
+    public Double getInverseWordFrequency() {
+        return inverseWordFrequency;
     }
 
     @Override
