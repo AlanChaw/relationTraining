@@ -95,6 +95,7 @@ public class Entry {
     /**
      * 随机生成测试集和训练集
      * 取1/10为测试集,并保证测试集中竞争和合作关系对的数量相等
+     * (这里错误 更正为保证训练集中竞争和合作关系对的数量相等
      */
     private void generateTrainingAndTestSet(){
         Random rand = new Random();
