@@ -1,4 +1,4 @@
-package Training.ProcessTraining;
+package Training.ProcessWeighting;
 
 import DealFile.Model.Doc;
 import DealFile.Model.EntityPair;
@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Training.ProcessTraining.PureTF.WINDOWLENGTH;
+import static Training.ProcessWeighting.PureTF.WINDOWLENGTH;
 
 /**
  * Created by alan on 16/9/10.

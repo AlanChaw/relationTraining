@@ -1,10 +1,9 @@
-package Training.ProcessTraining;
+package Training.ProcessWeighting;
 
 import DealFile.Model.Lemma;
 import Training.Model.MatchSentence;
 import Training.Model.PointWordExtend;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

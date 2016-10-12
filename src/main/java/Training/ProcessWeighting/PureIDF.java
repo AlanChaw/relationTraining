@@ -1,11 +1,10 @@
-package Training.ProcessTraining;
+package Training.ProcessWeighting;
 
 import DealFile.Model.Doc;
 import DealFile.Model.EntityPair;
 import DealFile.Model.Lemma;
 import DealFile.Model.OriginFile;
-import Training.Filters.PredictFilter;
-import Training.Filters.TrainingFilter;
+import Training.Filters.WeightingFilter;
 import Training.Model.*;
 
 import java.util.ArrayList;
@@ -14,28 +13,28 @@ import java.util.List;
 /**
  * Created by alan on 16/9/10.
  */
-public class PureIDF implements TrainingFilter {
+public class PureIDF implements WeightingFilter {
 
     private Integer D = 0;
 //    private Integer Dw = 0;
 
-    protected TrainingTask trainingTask;
+    protected WeightingTask weightingTask;
 
-    public int handleTraining(TrainingTask task) {
-        this.trainingTask = task;
+    public int handleWeighting(WeightingTask task) {
+        this.weightingTask = task;
         List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
 
         List<EntityPair> allEntityPairs = new ArrayList<EntityPair>();
-        allEntityPairs.addAll(this.trainingTask.getTrainingSetCompete());
-        allEntityPairs.addAll(this.trainingTask.getTrainingSetCooperate());
+        allEntityPairs.addAll(this.weightingTask.getTrainingSetCompete());
+        allEntityPairs.addAll(this.weightingTask.getTrainingSetCooperate());
 
         List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
-        allPointWords.addAll(trainingTask.getPointWordExtendListCompete());
-        allPointWords.addAll(trainingTask.getPointWordExtendListCooperate());
+        allPointWords.addAll(weightingTask.getPointWordExtendListCompete());
+        allPointWords.addAll(weightingTask.getPointWordExtendListCooperate());
 
         for (EntityPair entityPair : allEntityPairs){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-            OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
+            OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 allSentences.addAll(sentences);

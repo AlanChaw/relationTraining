@@ -1,4 +1,4 @@
-package Training.ProcessTraining;
+package Training.ProcessWeighting;
 
 /**
  * Created by alan on 16/7/30.
@@ -8,26 +8,25 @@ import DealFile.Model.Doc;
 import DealFile.Model.EntityPair;
 import DealFile.Model.Lemma;
 import DealFile.Model.OriginFile;
-import Training.Filters.TrainingFilter;
+import Training.Filters.WeightingFilter;
 import Training.Model.MatchSentence;
 import Training.Model.PointWordExtend;
-import Training.Model.TrainingTask;
+import Training.Model.WeightingTask;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * v1.0 最简单的训练方法,用实体所在的句子,直接找出wordnet关键词
  */
-public class PureTF implements TrainingFilter {
+public class PureTF implements WeightingFilter {
     public static int WINDOWLENGTH;
 
-    protected TrainingTask trainingTask;
+    protected WeightingTask weightingTask;
 
-    public int handleTraining(TrainingTask task) {
-        this.trainingTask = task;
-        handleTrainingCompete(trainingTask.getTrainingSetCompete());
-        handleTrainingCooperate(trainingTask.getTrainingSetCooperate());
+    public int handleWeighting(WeightingTask task) {
+        this.weightingTask = task;
+        handleTrainingCompete(weightingTask.getTrainingSetCompete());
+        handleTrainingCooperate(weightingTask.getTrainingSetCooperate());
         return 0;
     }
 
@@ -37,16 +36,16 @@ public class PureTF implements TrainingFilter {
 
         for (EntityPair entityPair : trainingSetCompete){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-            OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
+            OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 sentencesNum += sentences.size();
-                doTheTraining(sentences, trainingTask.getPointWordExtendListCompete());
+                doTheTraining(sentences, weightingTask.getPointWordExtendListCompete());
 
             }
 
         }
-        doStatistic(sentencesNum, trainingTask.getPointWordExtendListCompete());
+        doStatistic(sentencesNum, weightingTask.getPointWordExtendListCompete());
 
     }
 
@@ -55,16 +54,16 @@ public class PureTF implements TrainingFilter {
 
         for (EntityPair entityPair : trainingSetCooperate){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-            OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
+            OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 sentencesNum += sentences.size();
-                doTheTraining(sentences, trainingTask.getPointWordExtendListCooperate());
+                doTheTraining(sentences, weightingTask.getPointWordExtendListCooperate());
 
             }
 
         }
-        doStatistic(sentencesNum, trainingTask.getPointWordExtendListCooperate());
+        doStatistic(sentencesNum, weightingTask.getPointWordExtendListCooperate());
     }
 
     /**

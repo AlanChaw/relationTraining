@@ -6,13 +6,13 @@ import PointerWord.CompeteClosure;
 import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
 import Training.Filters.PredictFilter;
-import Training.Filters.TrainingFilter;
+import Training.Filters.WeightingFilter;
 import Training.Model.EntityPairExtend;
 import Training.Model.PointWordExtend;
 import Training.Model.PredictTask;
-import Training.Model.TrainingTask;
+import Training.Model.WeightingTask;
 import Training.ProcessPredict.PureTFPredict;
-import Training.ProcessTraining.*;
+import Training.ProcessWeighting.*;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
@@ -83,8 +83,10 @@ public class Entry {
 //        generateTrainingAndTestSet_test();
         generateTrainingAndTestSet();
 
-        //对每个训练集关系对进行训练
-        trainEveryEntityPair();
+        //计算指示词的权重
+        caculateWeightings();
+        //进行二分类训练
+        doTheTraining();
         //用训练结果进行预测
         PredictTask predictTask = doPredict();
         //对预测结果进行评估
@@ -208,25 +210,31 @@ public class Entry {
     /**
      * 分别对两个训练集关系对中的每个关系对进行训练
      */
-    private void trainEveryEntityPair(){
+    private void caculateWeightings(){
 
-//        TrainingFilter filter = new PureTF();
-//        TrainingFilter filter = new PureTF2();
-//        TrainingFilter filter = new PureIDF();
-//        TrainingFilter filter = new TF_IDF();
-//        TrainingFilter filter = new TF2_IDF();
-//        TrainingFilter filter = new PureIWF();
-        TrainingFilter filter = new TF_IWF();
+//        WeightingFilter filter = new PureTF();
+//        WeightingFilter filter = new PureTF2();
+//        WeightingFilter filter = new PureIDF();
+//        WeightingFilter filter = new TF_IDF();
+//        WeightingFilter filter = new TF2_IDF();
+//        WeightingFilter filter = new PureIWF();
+        WeightingFilter filter = new TF_IWF();
 
-        TrainingTask trainingTask = new TrainingTask();
-        trainingTask.setOriginFileList(originFileList);
+        WeightingTask weightingTask = new WeightingTask();
+        weightingTask.setOriginFileList(originFileList);
 
-        trainingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
-        trainingTask.setTrainingSetCompete(trainingSetCompete);
-        trainingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
-        trainingTask.setTrainingSetCooperate(trainingSetCooperate);
+        weightingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
+        weightingTask.setTrainingSetCompete(trainingSetCompete);
+        weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
+        weightingTask.setTrainingSetCooperate(trainingSetCooperate);
 
-        filter.handleTraining(trainingTask);
+        filter.handleWeighting(weightingTask);
+
+    }
+
+    private void doTheTraining(){
+
+
 
     }
 
@@ -241,7 +249,7 @@ public class Entry {
             }
             entityPairExtend.setPredictValue(0);
             entityPairsToPredict.add(entityPairExtend);
-        }
+    }
 
         PredictFilter fliter = new PureTFPredict();
         PredictTask predictTask = new PredictTask();

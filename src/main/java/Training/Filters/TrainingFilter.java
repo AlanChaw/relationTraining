@@ -1,11 +1,12 @@
 package Training.Filters;
 
-import Training.Model.TrainingTask;
+import Training.Model.WeightingTask;
 
 /**
- * Created by alan on 16/7/30.
+ * Created by alan on 16/10/12.
  */
 public interface TrainingFilter {
-    int handleTraining(TrainingTask task);
+
+    int handleTraining(WeightingTask task);
 
 }

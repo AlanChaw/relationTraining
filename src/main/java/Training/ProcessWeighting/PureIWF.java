@@ -1,13 +1,13 @@
-package Training.ProcessTraining;
+package Training.ProcessWeighting;
 
 import DealFile.Model.Doc;
 import DealFile.Model.EntityPair;
 import DealFile.Model.Lemma;
 import DealFile.Model.OriginFile;
-import Training.Filters.TrainingFilter;
+import Training.Filters.WeightingFilter;
 import Training.Model.MatchSentence;
 import Training.Model.PointWordExtend;
-import Training.Model.TrainingTask;
+import Training.Model.WeightingTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,27 +15,27 @@ import java.util.List;
 /**
  * Created by alan on 16/9/11.
  */
-public class PureIWF implements TrainingFilter {
+public class PureIWF implements WeightingFilter {
 
     private Integer wordNum;
-    protected TrainingTask trainingTask;
+    protected WeightingTask weightingTask;
 
-    public int handleTraining(TrainingTask task) {
+    public int handleWeighting(WeightingTask task) {
         this.wordNum = 0;
-        this.trainingTask = task;
+        this.weightingTask = task;
         List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
 
         List<EntityPair> allEntityPairs = new ArrayList<EntityPair>();
-        allEntityPairs.addAll(this.trainingTask.getTrainingSetCompete());
-        allEntityPairs.addAll(this.trainingTask.getTrainingSetCooperate());
+        allEntityPairs.addAll(this.weightingTask.getTrainingSetCompete());
+        allEntityPairs.addAll(this.weightingTask.getTrainingSetCooperate());
 
         List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
-        allPointWords.addAll(trainingTask.getPointWordExtendListCompete());
-        allPointWords.addAll(trainingTask.getPointWordExtendListCooperate());
+        allPointWords.addAll(weightingTask.getPointWordExtendListCompete());
+        allPointWords.addAll(weightingTask.getPointWordExtendListCooperate());
 
         for (EntityPair entityPair : allEntityPairs){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-            OriginFile originFile = HelpMethods.fileJsonToModel(trainingTask.getOriginFileList().get(identifi));
+            OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 allSentences.addAll(sentences);
@@ -61,15 +61,14 @@ public class PureIWF implements TrainingFilter {
         }
 
         for (PointWordExtend pointWordExtend : allPointWords){
-            if (pointWordExtend.getAllAppearCount() == 0){
-                pointWordExtend.setInverseWordFrequency(0.0);
-                pointWordExtend.setStatisticValue(0.0);
-            }
-
             Double iwf = (double)wordNum / pointWordExtend.getAllAppearCount();
             iwf = Math.log(iwf);
             pointWordExtend.setInverseWordFrequency(iwf);
             pointWordExtend.setStatisticValue(iwf);
+            if (pointWordExtend.getAllAppearCount() == 0){
+                pointWordExtend.setInverseWordFrequency(0.0);
+                pointWordExtend.setStatisticValue(0.0);
+            }
             System.out.println("词汇 : " + pointWordExtend.getPointWord().getLemma() + "出现 " + pointWordExtend.getAllAppearCount() + "次  IWF值 : " + pointWordExtend.getInverseWordFrequency());
         }
 

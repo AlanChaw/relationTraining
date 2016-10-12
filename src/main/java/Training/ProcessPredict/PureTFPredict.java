@@ -5,12 +5,10 @@ import DealFile.Model.Lemma;
 import DealFile.Model.OriginFile;
 import Training.Filters.PredictFilter;
 import Training.Model.EntityPairExtend;
-import Training.Model.MatchSentence;
 import Training.Model.PointWordExtend;
 import Training.Model.PredictTask;
-import Training.ProcessTraining.HelpMethods;
+import Training.ProcessWeighting.HelpMethods;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

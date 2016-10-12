@@ -1,8 +1,8 @@
-package Training.ProcessTraining;
+package Training.ProcessWeighting;
 
-import Training.Filters.TrainingFilter;
+import Training.Filters.WeightingFilter;
 import Training.Model.PointWordExtend;
-import Training.Model.TrainingTask;
+import Training.Model.WeightingTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +10,15 @@ import java.util.List;
 /**
  * Created by alan on 16/9/10.
  */
-public class TF_IDF implements TrainingFilter {
+public class TF_IDF implements WeightingFilter {
 
 
-    public int handleTraining(TrainingTask task) {
-        TrainingFilter TFFilter = new PureTF();
-        TrainingFilter IDFFilter = new PureIDF();
+    public int handleWeighting(WeightingTask task) {
+        WeightingFilter TFFilter = new PureTF();
+        WeightingFilter IDFFilter = new PureIDF();
 
-        TFFilter.handleTraining(task);
-        IDFFilter.handleTraining(task);
+        TFFilter.handleWeighting(task);
+        IDFFilter.handleWeighting(task);
 
         List<PointWordExtend> pointWordExtendList = new ArrayList<PointWordExtend>();
         pointWordExtendList.addAll(task.getPointWordExtendListCompete());
