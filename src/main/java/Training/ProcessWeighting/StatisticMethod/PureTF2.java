@@ -1,4 +1,4 @@
-package Training.ProcessWeighting;
+package Training.ProcessWeighting.StatisticMethod;
 
 import DealFile.Model.Lemma;
 import Training.Model.MatchSentence;

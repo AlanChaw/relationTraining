@@ -3,7 +3,7 @@ package Controller;
 import DealFile.DealOriginFile;
 import PointerWord.PointWordClosure;
 import Training.Model.PointWordExtend;
-import Training.ProcessWeighting.PureTF;
+import Training.ProcessWeighting.StatisticMethod.PureTF;
 import Training.Entry;
 import net.sf.extjwnl.JWNLException;
 

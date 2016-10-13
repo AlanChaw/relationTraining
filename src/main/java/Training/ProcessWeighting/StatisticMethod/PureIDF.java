@@ -1,27 +1,27 @@
-package Training.ProcessWeighting;
+package Training.ProcessWeighting.StatisticMethod;
 
 import DealFile.Model.Doc;
 import DealFile.Model.EntityPair;
 import DealFile.Model.Lemma;
 import DealFile.Model.OriginFile;
 import Training.Filters.WeightingFilter;
-import Training.Model.MatchSentence;
-import Training.Model.PointWordExtend;
-import Training.Model.WeightingTask;
+import Training.Model.*;
+import Training.ProcessWeighting.HelpMethods;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by alan on 16/9/11.
+ * Created by alan on 16/9/10.
  */
-public class PureIWF implements WeightingFilter {
+public class PureIDF implements WeightingFilter {
 
-    private Integer wordNum;
+    private Integer D = 0;
+//    private Integer Dw = 0;
+
     protected WeightingTask weightingTask;
 
     public int handleWeighting(WeightingTask task) {
-        this.wordNum = 0;
         this.weightingTask = task;
         List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
 
@@ -39,39 +39,54 @@ public class PureIWF implements WeightingFilter {
             for (Doc doc : originFile.getDocs()){
                 List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
                 allSentences.addAll(sentences);
+                D += sentences.size();
             }
         }
+
+        System.out.println("IDF, 总句子数 : " + D);
+
         for (MatchSentence matchSentence : allSentences){
-            this.wordNum += matchSentence.getLemmas().size();
+            doTheTraining(matchSentence, allPointWords);
         }
 
+        doStatistics(allPointWords);
 
-        System.out.println("IWF, 总句子数 : " + allSentences.size());
-        System.out.println("IWF, 词语总数 : " + wordNum);
+        return 0;
+    }
 
-
-        for (MatchSentence sentence : allSentences){
-            for (Lemma lemma : sentence.getLemmas()){
-                for (PointWordExtend pointWordExtend : allPointWords){
-                    if (pointWordExtend.getPointWord().getLemma().equals(lemma.getLemma())){
-                        pointWordExtend.setAllAppearCount(pointWordExtend.getAllAppearCount() + 1);
-                    }
+    private void doTheTraining(MatchSentence matchSentence, List<PointWordExtend> pointWordExtendList){
+        for (Lemma lemma : matchSentence.getLemmas()){        List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
+            for (PointWordExtend pointWordExtend : pointWordExtendList){
+                if (lemma.getLemma().equals(pointWordExtend.getPointWord().getLemma())){
+                    pointWordExtend.setDw(pointWordExtend.getDw() + 1);
+                    return;
                 }
             }
         }
 
+
+    }
+
+    private void doStatistics(List<PointWordExtend> allPointWords){
         for (PointWordExtend pointWordExtend : allPointWords){
-            Double iwf = (double)wordNum / pointWordExtend.getAllAppearCount();
-            iwf = Math.log(iwf);
-            pointWordExtend.setInverseWordFrequency(iwf);
-            pointWordExtend.setStatisticValue(iwf);
-            if (pointWordExtend.getAllAppearCount() == 0){
-                pointWordExtend.setInverseWordFrequency(0.0);
+            if (pointWordExtend.getDw() == 0){
+                pointWordExtend.setInverseDocumentFrequency(0.0);
                 pointWordExtend.setStatisticValue(0.0);
+                continue;
             }
-            System.out.println("词汇 : " + pointWordExtend.getPointWord().getLemma() + "出现 " + pointWordExtend.getAllAppearCount() + "次  IWF值 : " + pointWordExtend.getInverseWordFrequency());
+
+            Double idf = (double)D / pointWordExtend.getDw();
+            idf = Math.log(idf);
+            pointWordExtend.setInverseDocumentFrequency(idf);
+            //把统计值直接设为idf
+            pointWordExtend.setStatisticValue(idf);
+
+            System.out.println(pointWordExtend.toString());
         }
 
-        return 0;
+
     }
+
+
+
 }

@@ -1,4 +1,4 @@
-package Training.ProcessWeighting;
+package Training.ProcessWeighting.StatisticMethod;
 
 import Training.Filters.WeightingFilter;
 import Training.Model.PointWordExtend;
@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by alan on 16/9/11.
+ * Created by alan on 16/9/10.
  */
-public class TF2_IDF implements WeightingFilter {
+public class TF_IDF implements WeightingFilter {
 
 
     public int handleWeighting(WeightingTask task) {
-
-        WeightingFilter TFFilter = new PureTF2();
+        WeightingFilter TFFilter = new PureTF();
         WeightingFilter IDFFilter = new PureIDF();
 
         TFFilter.handleWeighting(task);
@@ -32,7 +31,4 @@ public class TF2_IDF implements WeightingFilter {
 
         return 0;
     }
-
-
-
 }

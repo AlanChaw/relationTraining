@@ -1,4 +1,4 @@
-package Training.ProcessWeighting;
+package Training.ProcessWeighting.StatisticMethod;
 
 import Training.Filters.WeightingFilter;
 import Training.Model.PointWordExtend;
@@ -10,26 +10,29 @@ import java.util.List;
 /**
  * Created by alan on 16/9/11.
  */
-public class TF_IWF implements WeightingFilter {
+public class TF2_IDF implements WeightingFilter {
+
+
     public int handleWeighting(WeightingTask task) {
 
-        WeightingFilter TFFilter = new PureTF();
-        WeightingFilter IWFFilter = new PureIWF();
+        WeightingFilter TFFilter = new PureTF2();
+        WeightingFilter IDFFilter = new PureIDF();
 
         TFFilter.handleWeighting(task);
-        IWFFilter.handleWeighting(task);
+        IDFFilter.handleWeighting(task);
 
         List<PointWordExtend> pointWordExtendList = new ArrayList<PointWordExtend>();
         pointWordExtendList.addAll(task.getPointWordExtendListCompete());
         pointWordExtendList.addAll(task.getPointWordExtendListCooperate());
 
         for (PointWordExtend pointWordExtend : pointWordExtendList){
-            Double tf_iwf = pointWordExtend.getTermFrequency() * pointWordExtend.getInverseWordFrequency();
-            pointWordExtend.setStatisticValue(tf_iwf);
+            Double tf_idf = pointWordExtend.getTermFrequency() * pointWordExtend.getInverseDocumentFrequency();
+            pointWordExtend.setStatisticValue(tf_idf);
         }
 
         return 0;
     }
+
 
 
 }

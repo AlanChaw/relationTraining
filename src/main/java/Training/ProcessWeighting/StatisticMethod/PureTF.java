@@ -1,4 +1,4 @@
-package Training.ProcessWeighting;
+package Training.ProcessWeighting.StatisticMethod;
 
 /**
  * Created by alan on 16/7/30.
@@ -12,11 +12,12 @@ import Training.Filters.WeightingFilter;
 import Training.Model.MatchSentence;
 import Training.Model.PointWordExtend;
 import Training.Model.WeightingTask;
+import Training.ProcessWeighting.HelpMethods;
 
 import java.util.List;
 
 /**
- * v1.0 最简单的训练方法,用实体所在的句子,直接找出wordnet关键词
+ * 最简单的训练方法,用实体所在的句子,直接找出wordnet关键词
  */
 public class PureTF implements WeightingFilter {
     public static int WINDOWLENGTH;

@@ -11,7 +11,7 @@ public class PointWordExtend {
     public static Double DECREASEFACTOR;
 
     private PointWord pointWord;
-    private Double statisticValue;
+    private Double statisticValue;   //即最后计算出的权值
 
     //TF
     private Double termFrequency;

@@ -1,5 +1,6 @@
 package Training.Filters;
 
+import Training.Model.TrainingTask;
 import Training.Model.WeightingTask;
 
 /**
@@ -7,6 +8,6 @@ import Training.Model.WeightingTask;
  */
 public interface TrainingFilter {
 
-    int handleTraining(WeightingTask task);
+    int handleTraining(TrainingTask task);
 
 }

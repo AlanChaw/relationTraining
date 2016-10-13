@@ -7,12 +7,9 @@ import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
 import Training.Filters.PredictFilter;
 import Training.Filters.WeightingFilter;
-import Training.Model.EntityPairExtend;
-import Training.Model.PointWordExtend;
-import Training.Model.PredictTask;
-import Training.Model.WeightingTask;
+import Training.Model.*;
 import Training.ProcessPredict.PureTFPredict;
-import Training.ProcessWeighting.*;
+import Training.ProcessWeighting.StatisticMethod.TF_IWF;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
@@ -86,7 +83,7 @@ public class Entry {
         //计算指示词的权重
         caculateWeightings();
         //进行二分类训练
-        doTheTraining();
+//        doTheTraining();
         //用训练结果进行预测
         PredictTask predictTask = doPredict();
         //对预测结果进行评估
@@ -232,11 +229,14 @@ public class Entry {
 
     }
 
-    private void doTheTraining(){
-
-
-
-    }
+//    private void doTheTraining(){
+//        TrainingTask task = new TrainingTask();
+//        task.setEntityPairs(this.entityPairList);
+//        TrainingFilter filter = new LogisticRegression();
+//        filter.handleTraining()
+//
+//
+//    }
 
     private PredictTask doPredict(){
         List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();

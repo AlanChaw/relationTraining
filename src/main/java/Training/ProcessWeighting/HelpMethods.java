@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Training.ProcessWeighting.PureTF.WINDOWLENGTH;
+import static Training.ProcessWeighting.StatisticMethod.PureTF.WINDOWLENGTH;
 
 /**
  * Created by alan on 16/9/10.
