@@ -6,9 +6,13 @@ import PointerWord.CompeteClosure;
 import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
 import Training.Filters.PredictFilter;
+import Training.Filters.TrainingFilter;
 import Training.Filters.WeightingFilter;
+import Training.Filters.WeightingFilterML;
 import Training.Model.*;
 import Training.ProcessPredict.PureTFPredict;
+import Training.ProcessTraining.LogisticRegression;
+import Training.ProcessWeighting.MLMethod.MLPureTF;
 import Training.ProcessWeighting.StatisticMethod.TF_IWF;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
@@ -39,6 +43,8 @@ public class Entry {
     private List<EntityPair> trainingSetCooperate;
     private List<EntityPair> testSetCompete;
     private List<EntityPair> testSetCooperate;
+
+    private List<EntityPairExtend> entityPairsWithWeightings;
 
     public Entry() throws java.io.IOException, JWNLException{
 
@@ -83,7 +89,7 @@ public class Entry {
         //计算指示词的权重
         caculateWeightings();
         //进行二分类训练
-//        doTheTraining();
+        doTheTraining();
         //用训练结果进行预测
         PredictTask predictTask = doPredict();
         //对预测结果进行评估
@@ -215,7 +221,9 @@ public class Entry {
 //        WeightingFilter filter = new TF_IDF();
 //        WeightingFilter filter = new TF2_IDF();
 //        WeightingFilter filter = new PureIWF();
-        WeightingFilter filter = new TF_IWF();
+//        WeightingFilter filter = new TF_IWF();
+
+        WeightingFilterML filter = new MLPureTF();
 
         WeightingTask weightingTask = new WeightingTask();
         weightingTask.setOriginFileList(originFileList);
@@ -225,18 +233,18 @@ public class Entry {
         weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
         weightingTask.setTrainingSetCooperate(trainingSetCooperate);
 
-        filter.handleWeighting(weightingTask);
+        this.entityPairsWithWeightings = filter.handleWeighting(weightingTask);
 
     }
 
-//    private void doTheTraining(){
-//        TrainingTask task = new TrainingTask();
-//        task.setEntityPairs(this.entityPairList);
-//        TrainingFilter filter = new LogisticRegression();
-//        filter.handleTraining()
-//
-//
-//    }
+    private void doTheTraining(){
+        TrainingTask task = new TrainingTask();
+        task.setEntityPairs(this.entityPairsWithWeightings);
+        TrainingFilter filter = new LogisticRegression();
+        filter.handleTraining(task);
+
+
+    }
 
     private PredictTask doPredict(){
         List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();

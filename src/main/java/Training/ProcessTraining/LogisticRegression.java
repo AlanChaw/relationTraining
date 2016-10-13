@@ -5,6 +5,10 @@ import Training.Model.EntityPairExtend;
 import Training.Model.PointWordExtend;
 import Training.Model.TrainingTask;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +51,23 @@ public class LogisticRegression implements TrainingFilter {
      * @param X_Matrix
      * @param Y_Matrix
      */
-    private void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix){
-        
-
+    private void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix) {
+        try{
+            File writename = new File("./file/middleFile.txt"); // 相对路径
+            writename.createNewFile(); // 创建新文件
+            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+            for (int i = 0; i < (X_Matrix.size() - 1); i++){
+                for (int j = 0; j < (X_Matrix.get(0).size() - 1); j++){
+                    out.write(X_Matrix.get(i).get(j).toString() + " ");
+                }
+                out.write(Y_Matrix.get(i).toString() + "\r\n");
+            }
+//            out.write("我会写入文件啦\r\n"); // \r\n即为换行
+            out.flush(); // 把缓存区内容压入文件
+            out.close(); // 最后记得关闭文件
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class EntityPairExtend {
     private EntityPair entityPair;
-    private Integer predictValue;   //预测结果, -1表示竞争,1表示合作,0表示预测值相同
+    private Integer predictValue = 0;   //预测结果, -1表示竞争,1表示合作,0表示预测值相同
     private List<PointWordExtend> pointWordExtendList;
 
     public void setEntityPair(EntityPair entityPair) {
@@ -52,4 +52,5 @@ public class EntityPairExtend {
 
         return null;
     }
+
 }

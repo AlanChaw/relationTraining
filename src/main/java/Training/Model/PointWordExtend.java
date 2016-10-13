@@ -7,7 +7,7 @@ import PointerWord.PointWord;
  */
 
 
-public class PointWordExtend {
+public class PointWordExtend implements Cloneable{
     public static Double DECREASEFACTOR;
 
     private PointWord pointWord;
@@ -101,5 +101,18 @@ public class PointWordExtend {
     @Override
     public String toString() {
         return "word : " + pointWord + "\t" + "statisticValue : " + statisticValue + "\t" + "count : " + Dw;
+    }
+
+    @Override
+    public PointWordExtend clone() {
+        PointWordExtend clone = null;
+        try{
+            clone = (PointWordExtend) super.clone();
+
+        }catch(CloneNotSupportedException e){
+            throw new RuntimeException(e);  // won't happen
+        }
+
+        return clone;
     }
 }

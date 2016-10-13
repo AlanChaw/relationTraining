@@ -17,6 +17,9 @@ public class WeightingTask {
     private List<EntityPair> trainingSetCooperate;
     private List<PointWordExtend> pointWordExtendListCooperate;
 
+    private List<EntityPairExtend> resultEntityPairs;
+
+
     public void setOriginFileList(List<JSONObject> originFileList) {
         this.originFileList = originFileList;
     }
@@ -55,5 +58,13 @@ public class WeightingTask {
 
     public List<PointWordExtend> getPointWordExtendListCooperate() {
         return pointWordExtendListCooperate;
+    }
+
+    public List<EntityPairExtend> getResultEntityPairs() {
+        return resultEntityPairs;
+    }
+
+    public void setResultEntityPairs(List<EntityPairExtend> resultEntityPairs) {
+        this.resultEntityPairs = resultEntityPairs;
     }
 }
