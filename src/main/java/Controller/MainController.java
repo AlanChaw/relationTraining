@@ -2,10 +2,16 @@ package Controller;
 
 import DealFile.DealOriginFile;
 import PointerWord.PointWordClosure;
+import SLR.SimpleLogisticRegression;
 import Training.Model.PointWordExtend;
 import Training.ProcessWeighting.StatisticMethod.PureTF;
 import Training.Entry;
+import com.mathworks.toolbox.javabuilder.MWClassID;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;
 import net.sf.extjwnl.JWNLException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alan on 16/7/16.
@@ -17,7 +23,7 @@ public class MainController {
         System.out.println("build ok");
 
         //最大文档编号
-        DealOriginFile.DOCNUM = 500;
+        DealOriginFile.DOCNUM = 499;
         //窗口长度
         PureTF.WINDOWLENGTH = 200;
         //近义词树的深度
@@ -31,6 +37,8 @@ public class MainController {
         System.out.println("------------------");
 
         Entry entry = new Entry();
+
+
     }
 
 }

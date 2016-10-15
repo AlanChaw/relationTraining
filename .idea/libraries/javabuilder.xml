@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="javabuilder">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/resources/javabuilder.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../relation/MATLAB training methods/LogisticRegression_1.0/SLR/for_testing/SLR.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

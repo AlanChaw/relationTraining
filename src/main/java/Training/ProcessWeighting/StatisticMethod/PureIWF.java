@@ -27,8 +27,8 @@ public class PureIWF implements WeightingFilter {
         List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
 
         List<EntityPair> allEntityPairs = new ArrayList<EntityPair>();
-        allEntityPairs.addAll(this.weightingTask.getTrainingSetCompete());
-        allEntityPairs.addAll(this.weightingTask.getTrainingSetCooperate());
+        allEntityPairs.addAll(this.weightingTask.getEntityPairSetCompete());
+        allEntityPairs.addAll(this.weightingTask.getEntityPairSetCooperate());
 
         List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
         allPointWords.addAll(weightingTask.getPointWordExtendListCompete());

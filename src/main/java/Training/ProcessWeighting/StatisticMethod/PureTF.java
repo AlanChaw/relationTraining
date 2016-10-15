@@ -26,8 +26,8 @@ public class PureTF implements WeightingFilter {
 
     public int handleWeighting(WeightingTask task) {
         this.weightingTask = task;
-        handleTrainingCompete(weightingTask.getTrainingSetCompete());
-        handleTrainingCooperate(weightingTask.getTrainingSetCooperate());
+        handleTrainingCompete(weightingTask.getEntityPairSetCompete());
+        handleTrainingCooperate(weightingTask.getEntityPairSetCooperate());
         return 0;
     }
 

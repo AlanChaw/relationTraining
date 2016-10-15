@@ -229,9 +229,9 @@ public class Entry {
         weightingTask.setOriginFileList(originFileList);
 
         weightingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
-        weightingTask.setTrainingSetCompete(trainingSetCompete);
+        weightingTask.setEntityPairSetCompete(trainingSetCompete);
         weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
-        weightingTask.setTrainingSetCooperate(trainingSetCooperate);
+        weightingTask.setEntityPairSetCooperate(trainingSetCooperate);
 
         this.entityPairsWithWeightings = filter.handleWeighting(weightingTask);
 
@@ -242,7 +242,6 @@ public class Entry {
         task.setEntityPairs(this.entityPairsWithWeightings);
         TrainingFilter filter = new LogisticRegression();
         filter.handleTraining(task);
-
 
     }
 

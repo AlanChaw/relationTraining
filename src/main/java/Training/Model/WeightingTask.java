@@ -11,10 +11,10 @@ import java.util.List;
 public class WeightingTask {
     private List<JSONObject> originFileList;
 
-    private List<EntityPair> trainingSetCompete;
+    private List<EntityPair> entityPairSetCompete;
     private List<PointWordExtend> pointWordExtendListCompete;
 
-    private List<EntityPair> trainingSetCooperate;
+    private List<EntityPair> entityPairSetCooperate;
     private List<PointWordExtend> pointWordExtendListCooperate;
 
     private List<EntityPairExtend> resultEntityPairs;
@@ -28,12 +28,12 @@ public class WeightingTask {
         return originFileList;
     }
 
-    public void setTrainingSetCompete(List<EntityPair> trainingSetCompete) {
-        this.trainingSetCompete = trainingSetCompete;
+    public void setEntityPairSetCompete(List<EntityPair> entityPairSetCompete) {
+        this.entityPairSetCompete = entityPairSetCompete;
     }
 
-    public List<EntityPair> getTrainingSetCompete() {
-        return trainingSetCompete;
+    public List<EntityPair> getEntityPairSetCompete() {
+        return entityPairSetCompete;
     }
 
     public void setPointWordExtendListCompete(List<PointWordExtend> pointWordExtendListCompete) {
@@ -44,12 +44,12 @@ public class WeightingTask {
         return pointWordExtendListCompete;
     }
 
-    public void setTrainingSetCooperate(List<EntityPair> trainingSetCooperate) {
-        this.trainingSetCooperate = trainingSetCooperate;
+    public void setEntityPairSetCooperate(List<EntityPair> entityPairSetCooperate) {
+        this.entityPairSetCooperate = entityPairSetCooperate;
     }
 
-    public List<EntityPair> getTrainingSetCooperate() {
-        return trainingSetCooperate;
+    public List<EntityPair> getEntityPairSetCooperate() {
+        return entityPairSetCooperate;
     }
 
     public void setPointWordExtendListCooperate(List<PointWordExtend> pointWordExtendListCooperate) {

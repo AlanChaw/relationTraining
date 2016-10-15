@@ -33,7 +33,7 @@ public class MLPureTF implements WeightingFilterML{
     }
 
     protected void handleWeightingCompete(){
-        for (EntityPair entityPair : weightingTask.getTrainingSetCompete()){
+        for (EntityPair entityPair : weightingTask.getEntityPairSetCompete()){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
             OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
             List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
@@ -50,7 +50,7 @@ public class MLPureTF implements WeightingFilterML{
 
 
     protected void handleWeightingCooperate(){
-        for (EntityPair entityPair : weightingTask.getTrainingSetCooperate()){
+        for (EntityPair entityPair : weightingTask.getEntityPairSetCooperate()){
             Integer identifi = Integer.valueOf(entityPair.getIdentifi());
             OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
             List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
