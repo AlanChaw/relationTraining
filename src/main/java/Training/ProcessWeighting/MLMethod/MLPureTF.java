@@ -43,8 +43,8 @@ public class MLPureTF implements WeightingFilterML{
             }
             EntityPairExtend entityPairExtend = doTheTraining(allSentences, weightingTask.getPointWordExtendListCompete(), entityPair);
             this.entityPairExtends.add(entityPairExtend);
-
         }
+
 
     }
 
@@ -96,7 +96,7 @@ public class MLPureTF implements WeightingFilterML{
         doStatistic(pointwordInEntityPair);
 
         entityPairExtend.setPointWordExtendList(pointwordInEntityPair);
-        if (entityPairExtend.getEntityPair().getRelation() < 0){
+        if (entityPairExtend.getEntityPair().getRelation() == 0){
             pointwordInEntityPair.addAll(this.weightingTask.getPointWordExtendListCooperate());
             entityPairExtend.setPointWordExtendList(pointwordInEntityPair);
         }else {

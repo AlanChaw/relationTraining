@@ -10,6 +10,7 @@ import Training.Filters.TrainingFilter;
 import Training.Filters.WeightingFilter;
 import Training.Filters.WeightingFilterML;
 import Training.Model.*;
+import Training.ProcessPredict.LogisticRegressionPredict;
 import Training.ProcessPredict.PureTFPredict;
 import Training.ProcessTraining.LogisticRegression;
 import Training.ProcessWeighting.MLMethod.MLPureTF;
@@ -18,6 +19,7 @@ import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -44,9 +46,12 @@ public class Entry {
     private List<EntityPair> testSetCompete;
     private List<EntityPair> testSetCooperate;
 
-    private List<EntityPairExtend> entityPairsWithWeightings;
+//    private List<EntityPairExtend> entityPairsWithWeightings;
+
+    private HashMap<String, Object> MLParameters;
 
     public Entry() throws java.io.IOException, JWNLException{
+        this.MLParameters = new HashMap<String, Object>();
 
         System.out.println("处理文档");
         this.originFileList = new ArrayList<JSONObject>();
@@ -87,9 +92,9 @@ public class Entry {
         generateTrainingAndTestSet();
 
         //计算指示词的权重
-        caculateWeightings();
+        List<EntityPairExtend> entityPairsWithWeightings = caculateWeightings(this.trainingSetCompete, this.trainingSetCooperate);
         //进行二分类训练
-        doTheTraining();
+        doTheTrainingLR(entityPairsWithWeightings);
         //用训练结果进行预测
         PredictTask predictTask = doPredict();
         //对预测结果进行评估
@@ -213,7 +218,7 @@ public class Entry {
     /**
      * 分别对两个训练集关系对中的每个关系对进行训练
      */
-    private void caculateWeightings(){
+    private List<EntityPairExtend> caculateWeightings(List<EntityPair> competeList, List<EntityPair> cooperateList){
 
 //        WeightingFilter filter = new PureTF();
 //        WeightingFilter filter = new PureTF2();
@@ -229,43 +234,62 @@ public class Entry {
         weightingTask.setOriginFileList(originFileList);
 
         weightingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
-        weightingTask.setEntityPairSetCompete(trainingSetCompete);
+        weightingTask.setEntityPairSetCompete(competeList);
         weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
-        weightingTask.setEntityPairSetCooperate(trainingSetCooperate);
+        weightingTask.setEntityPairSetCooperate(cooperateList);
 
-        this.entityPairsWithWeightings = filter.handleWeighting(weightingTask);
-
+//        this.entityPairsWithWeightings = filter.handleWeighting(weightingTask);
+        return filter.handleWeighting(weightingTask);
     }
 
-    private void doTheTraining(){
+    private void doTheTraining(List<EntityPairExtend> entityPairsWithWeightings){
         TrainingTask task = new TrainingTask();
-        task.setEntityPairs(this.entityPairsWithWeightings);
+        task.setEntityPairs(entityPairsWithWeightings);
         TrainingFilter filter = new LogisticRegression();
         filter.handleTraining(task);
 
     }
 
-    private PredictTask doPredict(){
-        List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();
-        for (int i = 0; i < testSetCompete.size() + testSetCooperate.size(); i++){
-            EntityPairExtend entityPairExtend = new EntityPairExtend();
-            if (i < testSetCompete.size()){
-                entityPairExtend.setEntityPair(testSetCompete.get(i));
-            }else {
-                entityPairExtend.setEntityPair(testSetCooperate.get(i - testSetCompete.size()));
-            }
-            entityPairExtend.setPredictValue(0);
-            entityPairsToPredict.add(entityPairExtend);
+    private void doTheTrainingLR(List<EntityPairExtend> entityPairsWithWeightings){
+        TrainingTask task = new TrainingTask();
+        task.setEntityPairs(entityPairsWithWeightings);
+        TrainingFilter filter = new LogisticRegression();
+        filter.handleTraining(task);
+//        this.MLParameters.put("theta", filter.getTheta());
+        this.MLParameters = filter.parameters;
     }
 
-        PredictFilter fliter = new PureTFPredict();
+    private PredictTask doPredict(){
+//        List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();
+//        for (int i = 0; i < testSetCompete.size() + testSetCooperate.size(); i++){
+//            EntityPairExtend entityPairExtend = new EntityPairExtend();
+//            if (i < testSetCompete.size()){
+//                entityPairExtend.setEntityPair(testSetCompete.get(i));
+//            }else {
+//                entityPairExtend.setEntityPair(testSetCooperate.get(i - testSetCompete.size()));
+//            }
+//            entityPairExtend.setPredictValue(0);
+//            entityPairsToPredict.add(entityPairExtend);
+//    }
+        WeightingTask weightingTask = new WeightingTask();
+        weightingTask.setOriginFileList(originFileList);
+        weightingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
+        weightingTask.setEntityPairSetCompete(this.testSetCompete);
+        weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
+        weightingTask.setEntityPairSetCooperate(this.testSetCooperate);
+        WeightingFilterML filter = new MLPureTF();
+        List<EntityPairExtend> entityPairsToPredict = filter.handleWeighting(weightingTask);
+
+//        PredictFilter fliter = new PureTFPredict();
+        PredictFilter predictFilter = new LogisticRegressionPredict();
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);
         predictTask.setCompeteExtendedPointWords(competeExtendedPonintWords);
         predictTask.setCooperateExtendedPointWords(cooperateExtendedPointWords);
         predictTask.setEntityPairsToPredict(entityPairsToPredict);
+        predictTask.setParameters(this.MLParameters);
 
-        fliter.handlePredict(predictTask);
+        predictFilter.handlePredict(predictTask);
 
         return predictTask;
     }
@@ -349,9 +373,9 @@ public class Entry {
         Integer competeNumPredict = 0;
         Integer competeNum = 0;
         for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
-            if (entityPairExtend.getPredictValue() == -1){
+            if (entityPairExtend.getPredictValue() == 0){
                 competeNumPredict++;
-                if (entityPairExtend.getEntityPair().getRelation() == -1){
+                if (entityPairExtend.getEntityPair().getRelation() == 0){
                     competeNum++;
                 }
             }
@@ -364,7 +388,7 @@ public class Entry {
     private Double caculateRecallCompete(PredictTask predictTask){
         Integer competeNum = 0;
         for (EntityPairExtend entityPairExtend : predictTask.getEntityPairsToPredict()){
-            if (entityPairExtend.getPredictValue() == -1 && entityPairExtend.getEntityPair().getRelation() == -1){
+            if (entityPairExtend.getPredictValue() == 0 && entityPairExtend.getEntityPair().getRelation() == 0){
                 competeNum++;
             }
         }

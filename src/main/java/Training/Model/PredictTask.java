@@ -4,6 +4,7 @@ import Training.Model.EntityPairExtend;
 import Training.Model.PointWordExtend;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ public class PredictTask {
     private List<PointWordExtend> competeExtendedPointWords;
     private List<PointWordExtend> cooperateExtendedPointWords;
 
+    private HashMap<String, Object> parameters;
     public void setOriginFileList(List<JSONObject> originFileList) {
         this.originFileList = originFileList;
     }
@@ -46,5 +48,13 @@ public class PredictTask {
 
     public List<PointWordExtend> getCooperateExtendedPointWords() {
         return cooperateExtendedPointWords;
+    }
+
+    public void setParameters(HashMap<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public HashMap<String, Object> getParameters() {
+        return parameters;
     }
 }
