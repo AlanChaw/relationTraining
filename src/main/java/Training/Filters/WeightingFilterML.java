@@ -3,6 +3,7 @@ package Training.Filters;
 import Training.Model.EntityPairExtend;
 import Training.Model.WeightingTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,6 +11,8 @@ import java.util.List;
  */
 public interface WeightingFilterML {
 
-    List<EntityPairExtend> handleWeighting(WeightingTask task);
+    int handleWeighting(WeightingTask task);
+    List<EntityPairExtend> competeEntityPairsWithWeightings = new ArrayList<EntityPairExtend>();
+    List<EntityPairExtend> cooperateEntityPairsWithWeightings = new ArrayList<EntityPairExtend>();
 
 }

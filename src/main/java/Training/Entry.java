@@ -15,13 +15,14 @@ import Training.ProcessPredict.PureTFPredict;
 import Training.ProcessTraining.LogisticRegression;
 import Training.ProcessWeighting.MLMethod.MLPureTF;
 import Training.ProcessWeighting.StatisticMethod.TF_IWF;
+import com.sun.jdi.DoubleValue;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.*;
 
 /**
  * Created by alan on 16/7/18.
@@ -29,7 +30,7 @@ import java.util.Random;
 public class Entry {
 
     //测试集大小, 这里定义竞争和合作关系各取25个为测试集
-    private static final int TESTSETNUM = 25;
+    private static final int SETNUM = 160;
 
     private List<JSONObject> originFileList;
     private List<EntityPair> entityPairList;
@@ -39,20 +40,13 @@ public class Entry {
     private List<PointWordExtend> competeExtendedPonintWords;
     private List<PointWordExtend> cooperateExtendedPointWords;
 
-    private List<EntityPair> competeList;
-    private List<EntityPair> cooperateList;
-    private List<EntityPair> trainingSetCompete;
-    private List<EntityPair> trainingSetCooperate;
-    private List<EntityPair> testSetCompete;
-    private List<EntityPair> testSetCooperate;
+    private List<List<EntityPairExtend>> competeTrainingList;
+    private List<List<EntityPairExtend>> cooperateTrainingList;
 
-//    private List<EntityPairExtend> entityPairsWithWeightings;
-
-    private HashMap<String, Object> MLParameters;
+    private List<EntityPairExtend> entityPairsWithWeightingsCompete;
+    private List<EntityPairExtend> entityPairsWithWeightingsCooperate;
 
     public Entry() throws java.io.IOException, JWNLException{
-        this.MLParameters = new HashMap<String, Object>();
-
         System.out.println("处理文档");
         this.originFileList = new ArrayList<JSONObject>();
         this.originFileList = DealOriginFile.getInstance().getOriginFileList();
@@ -69,14 +63,12 @@ public class Entry {
         System.out.println("指示词闭包 ok");
         System.out.println("------------------");
 
-        this.competeList = new ArrayList<EntityPair>();
-        this.cooperateList = new ArrayList<EntityPair>();
         this.competeExtendedPonintWords = new ArrayList<PointWordExtend>();
         this.cooperateExtendedPointWords = new ArrayList<PointWordExtend>();
-        this.testSetCompete = new ArrayList<EntityPair>();
-        this.testSetCooperate = new ArrayList<EntityPair>();
-        this.trainingSetCompete = new ArrayList<EntityPair>();
-        this.trainingSetCooperate = new ArrayList<EntityPair>();
+        this.competeTrainingList = new ArrayList<List<EntityPairExtend>>();
+        this.cooperateTrainingList = new ArrayList<List<EntityPairExtend>>();
+        this.entityPairsWithWeightingsCompete = new ArrayList<EntityPairExtend>();
+        this.entityPairsWithWeightingsCooperate = new ArrayList<EntityPairExtend>();
 
         for (PointWord pointWord : competePointWords){
             PointWordExtend pointWordExtend = new PointWordExtend(pointWord);
@@ -87,138 +79,164 @@ public class Entry {
             this.cooperateExtendedPointWords.add(pointWordExtend);
         }
 
-        //生成训练集和测试集
-//        generateTrainingAndTestSet_test();
-        generateTrainingAndTestSet();
+        List<EntityPair> competeList = new ArrayList<EntityPair>();
+        List<EntityPair> cooperateList = new ArrayList<EntityPair>();
+        for (EntityPair entityPair : this.entityPairList) {
+            if (entityPair.getRelation() > 0) {
+                if (cooperateList.size() < SETNUM) {
+                    cooperateList.add(entityPair);
+                }
+            } else {
+                if (competeList.size() < SETNUM) {
+                    competeList.add(entityPair);
+                }
+            }
+        }
 
         //计算指示词的权重
-        List<EntityPairExtend> entityPairsWithWeightings = caculateWeightings(this.trainingSetCompete, this.trainingSetCooperate);
-        //进行二分类训练
-        doTheTrainingLR(entityPairsWithWeightings);
-        //用训练结果进行预测
-        PredictTask predictTask = doPredict();
-        //对预测结果进行评估
-        doEstimate(predictTask);
+        caculateWeightings(competeList,cooperateList);
+        //生成训练集和测试集
+        generateTrainingAndTestSet();
+        //进行训练
+        beginTraining();
 
     }
 //
+
     /**
-     * 随机生成测试集和训练集
-     * 取1/10为测试集,并保证测试集中竞争和合作关系对的数量相等
-     * (这里错误 更正为保证训练集中竞争和合作关系对的数量相等
+     * 生成测试集和训练集, 采用10折交叉验证的方法
+     *
      */
     private void generateTrainingAndTestSet(){
         Random rand = new Random();
-//        for (int i = 0; i < 100; i++){
-//
-//            int randomNum = rand.nextInt(503);
-//            System.out.println(randomNum);
-//
-//        }
-        for (EntityPair entity : entityPairList){
-            if (entity.getRelation() > 0)
-                cooperateList.add(entity);
-            else
-                competeList.add(entity);
-        }
 
-        Integer competeNum = competeList.size();
-        Integer cooperateNum = cooperateList.size();
-
-        System.out.println("竞争关系对数量:" + competeNum);
-        System.out.println("合作关系对数量:" + cooperateNum);
-        System.out.println("------------------");
-
-        //生成表示竞争的测试集
-        while (testSetCompete.size() < TESTSETNUM){
-            Integer random = rand.nextInt(competeNum - 1);
-            if (alreadyExist(testSetCompete, random, competeList))
+        List<Integer> numbersCompete = new ArrayList<Integer>();
+        int i = 0;
+        while (i < SETNUM){
+            Integer number = rand.nextInt(160);
+            if (numbersCompete.contains(number)){
                 continue;
-            testSetCompete.add(competeList.get(random));
+            }else {
+                numbersCompete.add(number);
+                i++;
+            }
         }
 
-        //生成表示合作的测试集
-        while (testSetCooperate.size() < TESTSETNUM){
-            Integer random = rand.nextInt(cooperateNum - 1);
-            if (alreadyExist(testSetCooperate, random, cooperateList))
+        List<Integer> numbersCooperate = new ArrayList<Integer>();
+        i = 0;
+        while (i < SETNUM){
+            Integer number = rand.nextInt(160);
+            if (numbersCooperate.contains(number)){
                 continue;
-            else
-                testSetCooperate.add(cooperateList.get(random));
+            }else {
+                numbersCooperate.add(number);
+                i++;
+            }
         }
 
-        //生成竞争关系训练集
-        for (int i = 0; i < competeList.size(); i++){
-            if (alreadyExist(testSetCompete, i, competeList))
-                continue;
-            trainingSetCompete.add(competeList.get(i));
+        for (int n = 0; n < 10; n++){
+            List<EntityPairExtend> entityPairsFold = new ArrayList<EntityPairExtend>();
+            for (int m = 0; m < SETNUM / 10; m++){
+                int num = n * (SETNUM / 10) + m;
+                int index = numbersCompete.get(num);
+                entityPairsFold.add(this.entityPairsWithWeightingsCompete.get(index));
+            }
+            this.competeTrainingList.add(entityPairsFold);
+
+            List<EntityPairExtend> entityPairsFold2 = new ArrayList<EntityPairExtend>();
+            for (int m = 0; m < SETNUM / 10; m++){
+                int num = n * (SETNUM / 10) + m;
+                int index = numbersCooperate.get(num);
+                entityPairsFold2.add(this.entityPairsWithWeightingsCooperate.get(index));
+            }
+            this.cooperateTrainingList.add(entityPairsFold2);
         }
-
-        //生成合作关系训练集
-        for (int i = 0; i < cooperateList.size(); i++){
-            if (alreadyExist(testSetCooperate, i, cooperateList))
-                continue;
-            trainingSetCooperate.add(cooperateList.get(i));
-        }
-
-        System.out.println("竞争测试集大小:" + testSetCompete.size());
-        System.out.println("合作测试集大小:" + testSetCooperate.size());
-        System.out.println("竞争训练集大小:" + trainingSetCompete.size());
-        System.out.println("合作训练集大小:" + trainingSetCooperate.size());
-        System.out.println("------------------");
-
-    }
-
-    //检测要添加进测试集的竞争实体是否已存在于测试集中
-    private boolean alreadyExist(List<EntityPair> entityPairList, Integer index, List<EntityPair> mainList){
-        for (EntityPair entity : entityPairList){
-            if (entity.getIdentifi().equals(mainList.get(index).getIdentifi()))
-                return true;
-        }
-
-        return false;
     }
 
     /**
-     * ##测试用##  固定取竞争和合作关系对集合中前25个关系对为测试集 其余为训练集
+     * ##测试用##
      */
     private void generateTrainingAndTestSet_test(){
-        for (EntityPair entity : entityPairList){
-            if (entity.getRelation() > 0)
-                cooperateList.add(entity);
-            else
-                competeList.add(entity);
-        }
-
-        Integer competeNum = competeList.size();
-        Integer cooperateNum = cooperateList.size();
-
-        System.out.println("竞争关系对数量:" + competeNum);
-        System.out.println("合作关系对数量:" + cooperateNum);
-        System.out.println("------------------");
-
-        for (int i = 0; i < TESTSETNUM; i++){
-            this.testSetCompete.add(competeList.get(i));
-            this.testSetCooperate.add(cooperateList.get(i));
-        }
-        for (int i = TESTSETNUM; i < competeList.size(); i++){
-            this.trainingSetCompete.add(competeList.get(i));
-        }
-        for (int i = TESTSETNUM; i < cooperateList.size(); i++){
-            this.trainingSetCooperate.add(cooperateList.get(i));
-        }
-
-        System.out.println("竞争测试集大小:" + testSetCompete.size());
-        System.out.println("合作测试集大小:" + testSetCooperate.size());
-        System.out.println("竞争训练集大小:" + trainingSetCompete.size());
-        System.out.println("合作训练集大小:" + trainingSetCooperate.size());
-        System.out.println("------------------");
     }
 
+    private void beginTraining(){
+        List<HashMap<String, Double>> resultMapList = new ArrayList<HashMap<String, Double>>();
+        for (int i = 0; i < 10; i++) {
+            List<EntityPairExtend> trainingSet = new ArrayList<EntityPairExtend>();
+            List<EntityPairExtend> testSet = new ArrayList<EntityPairExtend>();
+            for (int j = 0; j < 10; j++){
+                if (j == i)
+                    continue;
+                trainingSet.addAll(this.competeTrainingList.get(j));
+                trainingSet.addAll(this.cooperateTrainingList.get(j));
+            }
+            testSet.addAll(this.cooperateTrainingList.get(i));
+            testSet.addAll(this.competeTrainingList.get(i));
+
+            //进行二分类训练
+            HashMap<String, Object> parameters = doTheTrainingML(trainingSet);
+            //用训练结果进行预测
+            PredictTask predictTask = doPredict(parameters, testSet);
+            //对预测结果进行评估
+            System.out.println("第" + (i + 1) + "次训练结果:");
+            HashMap<String, Double> resultMap = doEstimate(predictTask);
+            resultMapList.add(resultMap);
+        }
+
+
+        try{
+            File writename = new File("./file/resultEstimite.txt"); // 相对路径
+            writename.createNewFile(); // 创建新文件
+            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+
+            Double accuracySum = 0.0;
+            Double precisionCooperateSum = 0.0;
+            Double recallCooperateSum = 0.0;
+            Double FOneValueCooperateSum = 0.0;
+            Double precisionCompeteSum = 0.0;
+            Double recallCompeteSum = 0.0;
+            Double FOneValueCompeteSum = 0.0;
+            for (int i = 0; i < 10; i++){
+                HashMap<String, Double> resultMap = resultMapList.get(i);
+                out.write("第" + (i + 1) + "次训练" + "\r\n");
+                out.write("准确率: " + resultMap.get("accuracy") + "\r\n");
+                out.write("合作精确率: " + resultMap.get("precisionCooperate") + "\r\n");
+                out.write("合作召回率: " + resultMap.get("recallCooperate") + "\r\n");
+                out.write("合作F1值: " + resultMap.get("FOneValueCooperate") + "\r\n");
+                out.write("竞争精确率: " + resultMap.get("precisionCompete") + "\r\n");
+                out.write("竞争召回率: " + resultMap.get("recallCompete") + "\r\n");
+                out.write("竞争F1值: " + resultMap.get("FOneValueCompete") + "\r\n\r\n\r\n");
+                out.flush();
+
+                accuracySum += resultMap.get("accuracy");
+                precisionCooperateSum += resultMap.get("precisionCooperate");
+                recallCooperateSum += resultMap.get("recallCooperate");
+                FOneValueCooperateSum += resultMap.get("FOneValueCooperate");
+                precisionCompeteSum += resultMap.get("precisionCompete");
+                recallCompeteSum += resultMap.get("recallCompete");
+                FOneValueCompeteSum += resultMap.get("FOneValueCompete");
+            }
+
+            out.write("10次随机交叉验证指标平均值: " + "\r\n");
+            out.write("准确率: " + accuracySum / 10 + "\r\n");
+            out.write("合作精确率: " + precisionCooperateSum / 10 + "\r\n");
+            out.write("合作召回率: " + recallCooperateSum / 10 + "\r\n");
+            out.write("合作F1值: " + FOneValueCooperateSum / 10 + "\r\n");
+            out.write("竞争精确率: " + precisionCompeteSum / 10 + "\r\n");
+            out.write("竞争召回率: " + recallCompeteSum / 10 + "\r\n");
+            out.write("竞争F1值: " + FOneValueCompeteSum / 10 + "\r\n\r\n\r\n");
+            out.flush();
+            out.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * 分别对两个训练集关系对中的每个关系对进行训练
      */
-    private List<EntityPairExtend> caculateWeightings(List<EntityPair> competeList, List<EntityPair> cooperateList){
+    private void caculateWeightings(List<EntityPair> competeList, List<EntityPair> cooperateList){
 
 //        WeightingFilter filter = new PureTF();
 //        WeightingFilter filter = new PureTF2();
@@ -238,8 +256,10 @@ public class Entry {
         weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
         weightingTask.setEntityPairSetCooperate(cooperateList);
 
-//        this.entityPairsWithWeightings = filter.handleWeighting(weightingTask);
-        return filter.handleWeighting(weightingTask);
+        filter.handleWeighting(weightingTask);
+
+        this.entityPairsWithWeightingsCompete.addAll(filter.competeEntityPairsWithWeightings);
+        this.entityPairsWithWeightingsCooperate.addAll(filter.cooperateEntityPairsWithWeightings);
     }
 
     private void doTheTraining(List<EntityPairExtend> entityPairsWithWeightings){
@@ -247,54 +267,31 @@ public class Entry {
         task.setEntityPairs(entityPairsWithWeightings);
         TrainingFilter filter = new LogisticRegression();
         filter.handleTraining(task);
-
     }
 
-    private void doTheTrainingLR(List<EntityPairExtend> entityPairsWithWeightings){
+    private HashMap<String, Object> doTheTrainingML(List<EntityPairExtend> entityPairsWithWeightings){
         TrainingTask task = new TrainingTask();
         task.setEntityPairs(entityPairsWithWeightings);
         TrainingFilter filter = new LogisticRegression();
         filter.handleTraining(task);
-//        this.MLParameters.put("theta", filter.getTheta());
-        this.MLParameters = filter.parameters;
+        HashMap<String, Object> MLParameters = filter.parameters;
+        return MLParameters;
     }
 
-    private PredictTask doPredict(){
-//        List<EntityPairExtend> entityPairsToPredict = new ArrayList<EntityPairExtend>();
-//        for (int i = 0; i < testSetCompete.size() + testSetCooperate.size(); i++){
-//            EntityPairExtend entityPairExtend = new EntityPairExtend();
-//            if (i < testSetCompete.size()){
-//                entityPairExtend.setEntityPair(testSetCompete.get(i));
-//            }else {
-//                entityPairExtend.setEntityPair(testSetCooperate.get(i - testSetCompete.size()));
-//            }
-//            entityPairExtend.setPredictValue(0);
-//            entityPairsToPredict.add(entityPairExtend);
-//    }
-        WeightingTask weightingTask = new WeightingTask();
-        weightingTask.setOriginFileList(originFileList);
-        weightingTask.setPointWordExtendListCompete(competeExtendedPonintWords);
-        weightingTask.setEntityPairSetCompete(this.testSetCompete);
-        weightingTask.setPointWordExtendListCooperate(cooperateExtendedPointWords);
-        weightingTask.setEntityPairSetCooperate(this.testSetCooperate);
-        WeightingFilterML filter = new MLPureTF();
-        List<EntityPairExtend> entityPairsToPredict = filter.handleWeighting(weightingTask);
-
+    private PredictTask doPredict(HashMap<String, Object> parameters, List<EntityPairExtend> testSet){
 //        PredictFilter fliter = new PureTFPredict();
         PredictFilter predictFilter = new LogisticRegressionPredict();
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);
         predictTask.setCompeteExtendedPointWords(competeExtendedPonintWords);
         predictTask.setCooperateExtendedPointWords(cooperateExtendedPointWords);
-        predictTask.setEntityPairsToPredict(entityPairsToPredict);
-        predictTask.setParameters(this.MLParameters);
-
+        predictTask.setEntityPairsToPredict(testSet);
+        predictTask.setParameters(parameters);
         predictFilter.handlePredict(predictTask);
-
         return predictTask;
     }
 
-    private void doEstimate(PredictTask predictTask){
+    private HashMap<String, Double> doEstimate(PredictTask predictTask){
         //计算准确率
         Double accuracy = caculateAccuracy(predictTask);
         //计算精确率(合作)
@@ -316,13 +313,17 @@ public class Entry {
         System.out.println("竞争精确率: " + precisionCompete);
         System.out.println("竞争召回率: " + recallCompete);
         System.out.println("竞争F1值: " + FOneValueCompete);
-//        System.out.println(accuracy);
-//        System.out.println(precisionCooperate);
-//        System.out.println(recallCooperate);
-//        System.out.println(FOneValueCooperate);
-//        System.out.println(precisionCompete);
-//        System.out.println(recallCompete);
-//        System.out.println(FOneValueCompete);
+
+        HashMap<String, Double> resultMap = new HashMap<String, Double>();
+        resultMap.put("accuracy", accuracy);
+        resultMap.put("precisionCooperate", precisionCooperate);
+        resultMap.put("recallCooperate", recallCooperate);
+        resultMap.put("FOneValueCooperate", FOneValueCooperate);
+        resultMap.put("precisionCompete", precisionCompete);
+        resultMap.put("recallCompete", recallCompete);
+        resultMap.put("FOneValueCompete", FOneValueCompete);
+        return resultMap;
+
     }
 
     private Double caculateAccuracy(PredictTask predictTask){
@@ -366,7 +367,7 @@ public class Entry {
         }
 
         //预测为合作且正确的关系对占真实值为合作的关系对的比例
-        return (double)cooperateNum / TESTSETNUM;
+        return (double)cooperateNum / this.cooperateTrainingList.get(0).size();
     }
 
     private Double caculatePrecisionCompete(PredictTask predictTask){
@@ -392,7 +393,7 @@ public class Entry {
                 competeNum++;
             }
         }
-        return (double)competeNum / TESTSETNUM;
+        return (double)competeNum / this.competeTrainingList.get(0).size();
     }
 
     private Double caculateFOne(Double precision, Double recall){

@@ -24,39 +24,35 @@ import java.util.List;
  * Created by alan on 16/10/13.
  */
 public class MLPureTF implements WeightingFilterML{
-    private List<EntityPairExtend> entityPairExtends;
     private List<PointWordExtend> pointWordExtends;
     protected WeightingTask weightingTask;
 
-    public List<EntityPairExtend> handleWeighting(WeightingTask task) {
-        this.entityPairExtends = new ArrayList<EntityPairExtend>();
+    public int handleWeighting(WeightingTask task) {
         this.pointWordExtends = new ArrayList<PointWordExtend>();
         this.weightingTask = task;
-
-//        handleWeightingCompete();
-//        handleWeightingCooperate();
 
         for (EntityPair entityPair : weightingTask.getEntityPairSetCompete()){
             EntityPairExtend entityPairExtend = new EntityPairExtend();
             entityPairExtend.setEntityPair(entityPair);
-            entityPairExtends.add(entityPairExtend);
+            competeEntityPairsWithWeightings.add(entityPairExtend);
         }
         for (EntityPair entityPair : weightingTask.getEntityPairSetCooperate()){
             EntityPairExtend entityPairExtend = new EntityPairExtend();
             entityPairExtend.setEntityPair(entityPair);
-            entityPairExtends.add(entityPairExtend);
+            cooperateEntityPairsWithWeightings.add(entityPairExtend);
         }
 
         this.pointWordExtends.addAll(this.weightingTask.getPointWordExtendListCompete());
         this.pointWordExtends.addAll(this.weightingTask.getPointWordExtendListCooperate());
 
-        doWeightings();
+        doWeightings(competeEntityPairsWithWeightings);
+        doWeightings(cooperateEntityPairsWithWeightings);
 
-        return this.entityPairExtends;
+        return 1;
     }
 
-    protected void doWeightings(){
-        for (EntityPairExtend entityPairExtend : this.entityPairExtends){
+    protected void doWeightings(List<EntityPairExtend> entityPairExtends){
+        for (EntityPairExtend entityPairExtend : entityPairExtends){
             Integer identify = Integer.valueOf(entityPairExtend.getEntityPair().getIdentifi());
             OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identify));
             List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
@@ -71,6 +67,7 @@ public class MLPureTF implements WeightingFilterML{
     }
 
     protected void doStatistics(EntityPairExtend entityPairExtend, List<MatchSentence> allSentences){
+        //这里必须用深复制
         List<PointWordExtend> pointwordInEntityPair = new ArrayList<PointWordExtend>();
         Iterator<PointWordExtend> iterator = this.pointWordExtends.iterator();
         while (iterator.hasNext()){
@@ -103,102 +100,5 @@ public class MLPureTF implements WeightingFilterML{
 
         entityPairExtend.setPointWordExtendList(pointwordInEntityPair);
     }
-
-//
-//    protected void handleWeightingCompete(){
-//        for (EntityPair entityPair : weightingTask.getEntityPairSetCompete()){
-//            Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-//            OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
-//            List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
-//            for (Doc doc : originFile.getDocs()){
-//                List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
-//                allSentences.addAll(sentences);
-//            }
-//            EntityPairExtend entityPairExtend = doTheTraining(allSentences, weightingTask.getPointWordExtendListCompete(), entityPair);
-//            this.entityPairExtends.add(entityPairExtend);
-//        }
-//
-//
-//    }
-//
-//
-//    protected void handleWeightingCooperate(){
-//        for (EntityPair entityPair : weightingTask.getEntityPairSetCooperate()){
-//            Integer identifi = Integer.valueOf(entityPair.getIdentifi());
-//            OriginFile originFile = HelpMethods.fileJsonToModel(weightingTask.getOriginFileList().get(identifi));
-//            List<MatchSentence> allSentences = new ArrayList<MatchSentence>();
-//            for (Doc doc : originFile.getDocs()){
-//                List<MatchSentence> sentences = HelpMethods.findSentencesInDoc(doc, entityPair);
-//                allSentences.addAll(sentences);
-//            }
-//            EntityPairExtend entityPairExtend = doTheTraining(allSentences, weightingTask.getPointWordExtendListCooperate(), entityPair);
-//            this.entityPairExtends.add(entityPairExtend);
-//
-//        }
-//
-//    }
-
-//    /**
-//     * 统计指示词在sentence中出现的次数,对每个关系对 都要训练一套新的指示词权重集合
-//     * @param sentences
-//     * @param relation
-//     */
-//    protected EntityPairExtend doTheTraining(List<MatchSentence> sentences, List<PointWordExtend> pointWordList, EntityPair entityPair){
-//        List<PointWordExtend> pointwordInEntityPair = new ArrayList<PointWordExtend>();
-////        pointwordInEntityPair.addAll(pointWordList);
-//        Iterator<PointWordExtend> iterator = pointWordList.iterator();
-//        while (iterator.hasNext()){
-//            pointwordInEntityPair.add(iterator.next().clone());
-//        }
-//
-//        for (MatchSentence sentence : sentences){
-//            for (Lemma lemma : sentence.getLemmas()){
-//                for (PointWordExtend word : pointwordInEntityPair){
-//                    if (word.getPointWord().getLemma().equals(lemma.getLemma())){
-//                        word.setAppearCount(word.getAppearCount() + 1);
-////                        System.out.println("发现指示词: " + lemma.getLemma());
-//                    }
-//
-//                }
-//            }
-//
-//        }
-//
-//        EntityPairExtend entityPairExtend = new EntityPairExtend();
-//        entityPairExtend.setEntityPair(entityPair);
-//        doStatistic(pointwordInEntityPair);
-//
-//        entityPairExtend.setPointWordExtendList(pointwordInEntityPair);
-//        if (entityPairExtend.getEntityPair().getRelation() == 0){
-//            pointwordInEntityPair.addAll(this.weightingTask.getPointWordExtendListCooperate());
-//            entityPairExtend.setPointWordExtendList(pointwordInEntityPair);
-//        }else {
-//            List<PointWordExtend> pointWordCooperate = new ArrayList<PointWordExtend>();
-//            pointWordCooperate.addAll(this.weightingTask.getPointWordExtendListCompete());
-//            pointWordCooperate.addAll(pointwordInEntityPair);
-//            entityPairExtend.setPointWordExtendList(pointWordCooperate);
-//        }
-//
-//
-//        return entityPairExtend;
-//    }
-//
-//    protected void doStatistic(List<PointWordExtend> pointWordExtends){
-//        int sum = 0;
-//
-//        for (PointWordExtend pointWordExtend : pointWordExtends){
-//            sum += pointWordExtend.getAppearCount();
-//        }
-//        for (PointWordExtend pointWordExtend : pointWordExtends){
-//            if (sum == 0){
-//                pointWordExtend.setTermFrequency(0.0);
-//            }else {
-//                pointWordExtend.setTermFrequency((double) pointWordExtend.getAppearCount() / sum);
-//            }
-//            //纯tf方法,将统计值直接设为tf值
-//            pointWordExtend.setStatisticValue(pointWordExtend.getTermFrequency());
-//        }
-//
-//    }
 
 }
