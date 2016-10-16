@@ -74,9 +74,12 @@ public class HelpMethods {
                 }
 
                 //检索句子中是否有另一个实体词,如果有则保留
+                //FIX ME
                 for (int j = 0; j < sentence.getLemmas().size(); j++){
-                    if (sentence.getLemmas().get(j).getLemma().equals(entityPair.getEntityName_2()))
+                    if (sentence.getLemmas().get(j).getLemma().equals(entityPair.getEntityName_2())){
                         sentences.add(sentence);
+                        break;
+                    }
                 }
             }
 
