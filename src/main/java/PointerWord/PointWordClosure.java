@@ -48,6 +48,8 @@ public class PointWordClosure {
             generateTree(rootNode, depth);
 
             pointerTargetTreeList.add(tree);
+
+//            printAllTrees();
         }
     }
 

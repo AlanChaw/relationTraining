@@ -13,9 +13,7 @@ import Training.Model.*;
 import Training.ProcessPredict.LogisticRegressionPredict;
 import Training.ProcessPredict.PureTFPredict;
 import Training.ProcessTraining.LogisticRegression;
-import Training.ProcessWeighting.MLMethod.MLPureTF;
-import Training.ProcessWeighting.StatisticMethod.TF_IWF;
-import com.sun.jdi.DoubleValue;
+import Training.ProcessWeighting.MLMethod.*;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
@@ -161,7 +159,7 @@ public class Entry {
 
     private void beginTraining(){
         List<HashMap<String, Double>> resultMapList = new ArrayList<HashMap<String, Double>>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             List<EntityPairExtend> trainingSet = new ArrayList<EntityPairExtend>();
             List<EntityPairExtend> testSet = new ArrayList<EntityPairExtend>();
             for (int j = 0; j < 10; j++){
@@ -196,7 +194,7 @@ public class Entry {
             Double precisionCompeteSum = 0.0;
             Double recallCompeteSum = 0.0;
             Double FOneValueCompeteSum = 0.0;
-            for (int i = 0; i < 10; i++){
+            for (int i = 0; i < 2; i++){
                 HashMap<String, Double> resultMap = resultMapList.get(i);
                 out.write("第" + (i + 1) + "次训练" + "\r\n");
                 out.write("准确率: " + resultMap.get("accuracy") + "\r\n");
@@ -246,7 +244,11 @@ public class Entry {
 //        WeightingFilter filter = new PureIWF();
 //        WeightingFilter filter = new TF_IWF();
 
-        WeightingFilterML filter = new MLPureTF();
+//        WeightingFilterML filter = new MLPureTF();
+//        WeightingFilterML filter = new MLPureIDF();
+//        WeightingFilterML filter = new MLTFIDF();
+//        WeightingFilterML filter = new MLPureIWF();
+        WeightingFilterML filter = new MLTFIWF();
 
         WeightingTask weightingTask = new WeightingTask();
         weightingTask.setOriginFileList(originFileList);

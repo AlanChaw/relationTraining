@@ -55,7 +55,8 @@ public class PureIDF implements WeightingFilter {
     }
 
     private void doTheTraining(MatchSentence matchSentence, List<PointWordExtend> pointWordExtendList){
-        for (Lemma lemma : matchSentence.getLemmas()){        List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
+        for (Lemma lemma : matchSentence.getLemmas()){
+            List<PointWordExtend> allPointWords = new ArrayList<PointWordExtend>();
             for (PointWordExtend pointWordExtend : pointWordExtendList){
                 if (lemma.getLemma().equals(pointWordExtend.getPointWord().getLemma())){
                     pointWordExtend.setDw(pointWordExtend.getDw() + 1);
