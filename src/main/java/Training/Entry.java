@@ -246,9 +246,9 @@ public class Entry {
 
 //        WeightingFilterML filter = new MLPureTF();
 //        WeightingFilterML filter = new MLPureIDF();
-//        WeightingFilterML filter = new MLTFIDF();
+        WeightingFilterML filter = new MLTFIDF();
 //        WeightingFilterML filter = new MLPureIWF();
-        WeightingFilterML filter = new MLTFIWF();
+//        WeightingFilterML filter = new MLTFIWF();
 
         WeightingTask weightingTask = new WeightingTask();
         weightingTask.setOriginFileList(originFileList);

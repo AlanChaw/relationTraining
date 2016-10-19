@@ -18,37 +18,11 @@ import java.util.List;
 /**
  * Created by alan on 16/10/12.
  */
-public class LogisticRegression implements TrainingFilter {
-
-    private TrainingTask trainingTask;
+public class LogisticRegression extends TrainingMethod implements TrainingFilter {
     private double[] Theta;
 
     public int handleTraining(TrainingTask task) {
-        this.trainingTask = task;
-
-        int Xcount = trainingTask.getEntityPairs().get(0).getPointWordExtendList().size();
-
-        List<List<Double>> X_Matrix = new ArrayList<List<Double>>();
-        List<Integer> Y_Matrix = new ArrayList<Integer>();
-        for (EntityPairExtend entityPair : trainingTask.getEntityPairs()){
-            List<Double> X = extractWeightings(entityPair);
-            Integer Y = entityPair.getEntityPair().getRelation();
-            X_Matrix.add(X);
-            Y_Matrix.add(Y);
-        }
-
-        doTraining(X_Matrix, Y_Matrix);
-        parameters.put("theta", this.Theta);
-
-        return 0;
-    }
-
-    private List<Double> extractWeightings(EntityPairExtend entityPair){
-        List<Double> weightings = new ArrayList<Double>();
-        for (PointWordExtend pointWord : entityPair.getPointWordExtendList()){
-            weightings.add(pointWord.getStatisticValue());
-        }
-        return weightings;
+        return super.handleTraining(task);
     }
 
     /**
@@ -56,7 +30,8 @@ public class LogisticRegression implements TrainingFilter {
      * @param X_Matrix
      * @param Y_Matrix
      */
-    private void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix) {
+    @Override
+    protected void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix) {
         try{
             File writename = new File("./file/middleFile.txt"); // 相对路径
             writename.createNewFile(); // 创建新文件
@@ -88,6 +63,7 @@ public class LogisticRegression implements TrainingFilter {
             e.printStackTrace();
         }
 
+        parameters.put("theta", this.Theta);
     }
 
     public void setTheta(double[] theta) {

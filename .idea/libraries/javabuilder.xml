@@ -2,7 +2,8 @@
   <library name="javabuilder">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/src/main/resources/javabuilder.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../relationMLTraining/LogisticRegression_1.0/SLR/for_testing/SLR.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../relationTrainingMethod/QuadraticSVM/QuadraticSVM/for_testing/QuadraticSVM.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../relationTrainingMethod/LogisticRegression_1.0/SLR/for_testing/SLR.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
