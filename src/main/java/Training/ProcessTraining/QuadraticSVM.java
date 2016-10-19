@@ -1,8 +1,13 @@
 package Training.ProcessTraining;
 
+import SLR.SimpleLogisticRegression;
 import Training.Filters.TrainingFilter;
 import Training.Model.TrainingTask;
+import com.mathworks.toolbox.javabuilder.MWNumericArray;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 /**
@@ -16,9 +21,7 @@ public class QuadraticSVM extends TrainingMethod implements TrainingFilter {
 
     @Override
     protected void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix) {
-
-
-
+        super.doTraining(X_Matrix, Y_Matrix);
 
 
     }

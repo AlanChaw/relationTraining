@@ -5,6 +5,9 @@ import Training.Model.EntityPairExtend;
 import Training.Model.PointWordExtend;
 import Training.Model.TrainingTask;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +44,22 @@ public class TrainingMethod implements TrainingFilter {
     }
 
     protected void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix) {
-
+        try{
+            File writename = new File("./file/middleFile.txt"); // 相对路径
+            writename.createNewFile(); // 创建新文件
+            BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+            System.out.println("X大小:" + X_Matrix.size() + "    " + X_Matrix.get(0).size());
+            for (int i = 0; i < X_Matrix.size(); i++){
+                for (int j = 0; j < X_Matrix.get(0).size(); j++){
+                    out.write(X_Matrix.get(i).get(j).toString() + " ");
+                }
+                out.write(Y_Matrix.get(i).toString() + "\r\n");
+            }
+            out.flush();
+            out.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
