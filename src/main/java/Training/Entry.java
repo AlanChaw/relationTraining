@@ -7,12 +7,11 @@ import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
 import Training.Filters.PredictFilter;
 import Training.Filters.TrainingFilter;
-import Training.Filters.WeightingFilter;
 import Training.Filters.WeightingFilterML;
 import Training.Model.*;
-import Training.ProcessPredict.LogisticRegressionPredict;
-import Training.ProcessPredict.PureTFPredict;
+import Training.ProcessPredict.WknnPredict;
 import Training.ProcessTraining.LogisticRegression;
+import Training.ProcessTraining.Wknn;
 import Training.ProcessWeighting.MLMethod.*;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
@@ -159,7 +158,7 @@ public class Entry {
 
     private void beginTraining(){
         List<HashMap<String, Double>> resultMapList = new ArrayList<HashMap<String, Double>>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 10; i++) {
             List<EntityPairExtend> trainingSet = new ArrayList<EntityPairExtend>();
             List<EntityPairExtend> testSet = new ArrayList<EntityPairExtend>();
             for (int j = 0; j < 10; j++){
@@ -194,7 +193,7 @@ public class Entry {
             Double precisionCompeteSum = 0.0;
             Double recallCompeteSum = 0.0;
             Double FOneValueCompeteSum = 0.0;
-            for (int i = 0; i < 2; i++){
+            for (int i = 0; i < 10; i++){
                 HashMap<String, Double> resultMap = resultMapList.get(i);
                 out.write("第" + (i + 1) + "次训练" + "\r\n");
                 out.write("准确率: " + resultMap.get("accuracy") + "\r\n");
@@ -274,7 +273,11 @@ public class Entry {
     private HashMap<String, Object> doTheTrainingML(List<EntityPairExtend> entityPairsWithWeightings){
         TrainingTask task = new TrainingTask();
         task.setEntityPairs(entityPairsWithWeightings);
-        TrainingFilter filter = new LogisticRegression();
+
+//        TrainingFilter filter = new LogisticRegression();
+//        TrainingFilter filter = new Qsvm();
+        TrainingFilter filter = new Wknn();
+
         filter.handleTraining(task);
         HashMap<String, Object> MLParameters = filter.parameters;
         return MLParameters;
@@ -282,7 +285,10 @@ public class Entry {
 
     private PredictTask doPredict(HashMap<String, Object> parameters, List<EntityPairExtend> testSet){
 //        PredictFilter fliter = new PureTFPredict();
-        PredictFilter predictFilter = new LogisticRegressionPredict();
+//        PredictFilter predictFilter = new LogisticRegressionPredict();
+//        PredictFilter predictFilter = new QsvmPredict();
+        PredictFilter predictFilter = new WknnPredict();
+
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);
         predictTask.setCompeteExtendedPointWords(competeExtendedPonintWords);

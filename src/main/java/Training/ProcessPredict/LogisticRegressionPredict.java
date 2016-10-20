@@ -17,10 +17,6 @@ public class LogisticRegressionPredict implements PredictFilter{
 
         double[] theta = (double[])task.getParameters().get("theta");
 
-//        System.out.println(theta.toString());
-//        for (double t : theta){
-//            System.out.println(t);
-//        }
         List<EntityPairExtend> entityPairsToPredict = task.getEntityPairsToPredict();
         for (EntityPairExtend entityPair : entityPairsToPredict){
             double[] parameters = new double[entityPair.getPointWordExtendList().size()];
