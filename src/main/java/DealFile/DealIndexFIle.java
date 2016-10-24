@@ -21,7 +21,7 @@ public class DealIndexFile {
         this.entityPairList = new ArrayList<EntityPair>();
 
         String result;
-        File file = new File("file/relationsWithIndex.txt");
+        File file = new File("/Users/alan/Documents/relationTraining/file/relationsWithIndex.txt");
         FileReader fileReader = new FileReader(file);
         BufferedReader br = new BufferedReader(fileReader);
         while ((result = br.readLine()) != null){

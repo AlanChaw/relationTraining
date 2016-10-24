@@ -5,20 +5,21 @@ import DealFile.Model.EntityPair;
 import PointerWord.CompeteClosure;
 import PointerWord.CooperateClosure;
 import PointerWord.PointWord;
+import PointerWord.PointWordClosure;
 import Training.Filters.PredictFilter;
 import Training.Filters.TrainingFilter;
+import Training.Filters.WeightingFilter;
 import Training.Filters.WeightingFilterML;
 import Training.Model.*;
-import Training.ProcessPredict.WknnPredict;
-import Training.ProcessTraining.LogisticRegression;
-import Training.ProcessTraining.Wknn;
+import Training.ProcessPredict.*;
+import Training.ProcessTraining.*;
+import Training.ProcessWeighting.HelpMethods;
 import Training.ProcessWeighting.MLMethod.*;
+import Training.ProcessWeighting.StatisticMethod.PureTF;
 import net.sf.extjwnl.JWNLException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -90,12 +91,22 @@ public class Entry {
             }
         }
 
+        for (PointWord pointWord : this.competePointWords){
+            System.out.println("竞争指示词: " + pointWord.getLemma());
+        }
+        for (PointWord pointWord : this.cooperatePointWords){
+            System.out.println("合作指示词" + pointWord.getLemma());
+        }
+
+
         //计算指示词的权重
         caculateWeightings(competeList,cooperateList);
         //生成训练集和测试集
         generateTrainingAndTestSet();
         //进行训练
         beginTraining();
+
+
 
     }
 //
@@ -182,7 +193,7 @@ public class Entry {
 
 
         try{
-            File writename = new File("./file/resultEstimite.txt"); // 相对路径
+            File writename = new File("/Users/alan/Documents/relationTraining/file/resultEstimite.txt");
             writename.createNewFile(); // 创建新文件
             BufferedWriter out = new BufferedWriter(new FileWriter(writename));
 
@@ -214,16 +225,22 @@ public class Entry {
                 FOneValueCompeteSum += resultMap.get("FOneValueCompete");
             }
 
-            out.write("10次随机交叉验证指标平均值: " + "\r\n");
-            out.write("准确率: " + accuracySum / 10 + "\r\n");
-            out.write("合作精确率: " + precisionCooperateSum / 10 + "\r\n");
-            out.write("合作召回率: " + recallCooperateSum / 10 + "\r\n");
-            out.write("合作F1值: " + FOneValueCooperateSum / 10 + "\r\n");
-            out.write("竞争精确率: " + precisionCompeteSum / 10 + "\r\n");
-            out.write("竞争召回率: " + recallCompeteSum / 10 + "\r\n");
-            out.write("竞争F1值: " + FOneValueCompeteSum / 10 + "\r\n\r\n\r\n");
+            File testresultfile = new File("/Users/alan/Documents/relationTraining/file/testresult.txt");
+            BufferedWriter out2 = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(testresultfile, true)));
+            out2.write("参数: " + HelpMethods.WINDOWLENGTH + " " + PointWordClosure.DEPTH + " " + PointWordExtend.DECREASEFACTOR + "\r\n");
+            out2.write("10次随机交叉验证指标平均值: " + "\r\n");
+            out2.write("准确率: " + accuracySum / 10 + "\r\n");
+            out2.write("合作精确率: " + precisionCooperateSum / 10 + "\r\n");
+            out2.write("合作召回率: " + recallCooperateSum / 10 + "\r\n");
+            out2.write("合作F1值: " + FOneValueCooperateSum / 10 + "\r\n");
+            out2.write("竞争精确率: " + precisionCompeteSum / 10 + "\r\n");
+            out2.write("竞争召回率: " + recallCompeteSum / 10 + "\r\n");
+            out2.write("竞争F1值: " + FOneValueCompeteSum / 10 + "\r\n\r\n\r\n");
             out.flush();
             out.close();
+            out2.flush();
+            out2.close();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -245,9 +262,9 @@ public class Entry {
 
 //        WeightingFilterML filter = new MLPureTF();
 //        WeightingFilterML filter = new MLPureIDF();
-        WeightingFilterML filter = new MLTFIDF();
+//        WeightingFilterML filter = new MLTFIDF();
 //        WeightingFilterML filter = new MLPureIWF();
-//        WeightingFilterML filter = new MLTFIWF();
+        WeightingFilterML filter = new MLTFIWF();
 
         WeightingTask weightingTask = new WeightingTask();
         weightingTask.setOriginFileList(originFileList);
@@ -276,7 +293,9 @@ public class Entry {
 
 //        TrainingFilter filter = new LogisticRegression();
 //        TrainingFilter filter = new Qsvm();
-        TrainingFilter filter = new Wknn();
+//        TrainingFilter filter = new Wknn();
+        TrainingFilter filter = new ClassificationSVM();
+//        TrainingFilter filter = new ClassificationTree();
 
         filter.handleTraining(task);
         HashMap<String, Object> MLParameters = filter.parameters;
@@ -287,7 +306,9 @@ public class Entry {
 //        PredictFilter fliter = new PureTFPredict();
 //        PredictFilter predictFilter = new LogisticRegressionPredict();
 //        PredictFilter predictFilter = new QsvmPredict();
-        PredictFilter predictFilter = new WknnPredict();
+//        PredictFilter predictFilter = new WknnPredict();
+        PredictFilter predictFilter = new ClasificationSVMPredict();
+//        PredictFilter predictFilter = new ClassificationTreePredict();
 
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);

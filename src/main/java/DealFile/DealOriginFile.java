@@ -66,7 +66,7 @@ public class DealOriginFile {
 
 
 
-            System.out.println(".");
+            System.out.println(identifi);
 //
             br.close();
             fileReader.close();

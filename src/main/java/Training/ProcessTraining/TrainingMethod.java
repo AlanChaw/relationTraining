@@ -45,7 +45,7 @@ public class TrainingMethod implements TrainingFilter {
 
     protected void doTraining(List<List<Double>> X_Matrix, List<Integer> Y_Matrix) {
         try{
-            File writename = new File("./file/middleFile.txt"); // 相对路径
+            File writename = new File("/Users/alan/Documents/relationTraining/file/middleFile.txt");
             writename.createNewFile(); // 创建新文件
             BufferedWriter out = new BufferedWriter(new FileWriter(writename));
             System.out.println("X大小:" + X_Matrix.size() + "    " + X_Matrix.get(0).size());

@@ -57,7 +57,25 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="jar://$MODULE_DIR$/../relationTrainingMethod/ClassificationSVM/CSVM/for_testing/CSVM.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="jar://$MODULE_DIR$/../relationTrainingMethod/DecisionTree/CDTPredict/for_testing/CDTPredict.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../relationTrainingMethod/ClassificationTree/DecisionTree/for_testing/DecisionTree.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

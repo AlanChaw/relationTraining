@@ -11,12 +11,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Training.ProcessWeighting.StatisticMethod.PureTF.WINDOWLENGTH;
 
 /**
  * Created by alan on 16/9/10.
  */
 public class HelpMethods {
+    public static Integer WINDOWLENGTH;
 
     /**
      * 把原始文档的json串封装成模型

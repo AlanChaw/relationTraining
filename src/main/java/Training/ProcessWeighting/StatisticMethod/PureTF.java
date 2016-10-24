@@ -20,7 +20,6 @@ import java.util.List;
  * 最简单的训练方法,用实体所在的句子,直接找出wordnet关键词
  */
 public class PureTF implements WeightingFilter {
-    public static int WINDOWLENGTH;
 
     protected WeightingTask weightingTask;
 
