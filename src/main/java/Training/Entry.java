@@ -228,7 +228,7 @@ public class Entry {
             File testresultfile = new File("/Users/alan/Documents/relationTraining/file/testresult.txt");
             BufferedWriter out2 = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(testresultfile, true)));
-            out2.write("参数: " + HelpMethods.WINDOWLENGTH + " " + PointWordClosure.DEPTH + " " + PointWordExtend.DECREASEFACTOR + "\r\n");
+            out2.write("参数: " + HelpMethods.WINDOWLENGTH + " " + PointWordClosure.DEPTH + " " + PointWordExtend.DECREASEFACTOR + " " + ClasificationSVMPredict.classificationThreshold + "\r\n");
             out2.write("10次随机交叉验证指标平均值: " + "\r\n");
             out2.write("准确率: " + accuracySum / 10 + "\r\n");
             out2.write("合作精确率: " + precisionCooperateSum / 10 + "\r\n");
@@ -264,7 +264,8 @@ public class Entry {
 //        WeightingFilterML filter = new MLPureIDF();
 //        WeightingFilterML filter = new MLTFIDF();
 //        WeightingFilterML filter = new MLPureIWF();
-        WeightingFilterML filter = new MLTFIWF();
+//        WeightingFilterML filter = new MLTFIWF();
+        WeightingFilterML filter = new MLBDC();
 
         WeightingTask weightingTask = new WeightingTask();
         weightingTask.setOriginFileList(originFileList);
@@ -296,6 +297,7 @@ public class Entry {
 //        TrainingFilter filter = new Wknn();
         TrainingFilter filter = new ClassificationSVM();
 //        TrainingFilter filter = new ClassificationTree();
+//        TrainingFilter filter = new MLKNN();
 
         filter.handleTraining(task);
         HashMap<String, Object> MLParameters = filter.parameters;
@@ -309,6 +311,7 @@ public class Entry {
 //        PredictFilter predictFilter = new WknnPredict();
         PredictFilter predictFilter = new ClasificationSVMPredict();
 //        PredictFilter predictFilter = new ClassificationTreePredict();
+//        PredictFilter predictFilter = new MLKNNPredict();
 
         PredictTask predictTask = new PredictTask();
         predictTask.setOriginFileList(originFileList);

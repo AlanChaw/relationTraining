@@ -43,8 +43,6 @@ public class ClassificationTreePredict implements PredictFilter {
                 entityPairsToPredict.get(i).setPredictValue(results[i]);
             }
 
-            decisionTree.dispose();
-            output.dispose();
         }catch (Exception e){
             e.printStackTrace();
         }

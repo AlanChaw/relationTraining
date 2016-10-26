@@ -1,7 +1,7 @@
 package Training.ProcessPredict;
 
-import CSVM.SVM;
-import QuadraticSVM.QSVM;
+import DecisionTree.DT;
+import KNNPredict.KNN;
 import Training.Filters.PredictFilter;
 import Training.Model.EntityPairExtend;
 import Training.Model.PredictTask;
@@ -11,10 +11,9 @@ import com.mathworks.toolbox.javabuilder.MWNumericArray;
 import java.util.List;
 
 /**
- * Created by alan on 10/24/16.
+ * Created by alan on 10/26/16.
  */
-public class ClasificationSVMPredict implements PredictFilter {
-    public static double classificationThreshold;
+public class MLKNNPredict implements PredictFilter {
 
     public int handlePredict(PredictTask task) {
 
@@ -27,29 +26,21 @@ public class ClasificationSVMPredict implements PredictFilter {
         }
 
         MWNumericArray x = null;
-        MWNumericArray labels = null;
-        MWNumericArray scores = null;
+        MWNumericArray output = null;
         Object[] result = null;
 
         try {
-            SVM csvm = null;
-            csvm = (SVM)task.getParameters().get("csvm");
-            result = csvm.CSVM(1);
+            KNN knn = null;
+            knn = (KNN)task.getParameters().get("knn");
+            result = knn.KNNTraining(1);
             Object Mdl = result[0];
             x = new MWNumericArray(X, MWClassID.DOUBLE);
-            result = csvm.CSVMPredict(2, Mdl, x);
-            labels = (MWNumericArray)result[0];
-            scores = (MWNumericArray)result[1];
-            int[] labelsArray = labels.getIntData();
-            double[] scoresArray = scores.getDoubleData();
-
+            result = knn.KNNPredict(1, Mdl, x);
+            output = (MWNumericArray)result[0];
+            int[] results = output.getIntData();
             for (int i = 0; i < entityPairsToPredict.size(); i++){
-                if (scoresArray[i] < classificationThreshold)
-                    entityPairsToPredict.get(i).setPredictValue(0);
-                else
-                    entityPairsToPredict.get(i).setPredictValue(1);
+                entityPairsToPredict.get(i).setPredictValue(results[i]);
             }
-
 
         }catch (Exception e){
             e.printStackTrace();

@@ -5,6 +5,8 @@ import PointerWord.PointWord;
 import PointerWord.PointWordClosure;
 import SLR.SimpleLogisticRegression;
 import Training.Model.PointWordExtend;
+import Training.ProcessPredict.ClasificationSVMPredict;
+import Training.ProcessTraining.ClassificationSVM;
 import Training.ProcessWeighting.HelpMethods;
 import Training.ProcessWeighting.StatisticMethod.PureTF;
 import Training.Entry;
@@ -35,7 +37,9 @@ public class MainController {
         //递减因子
         PointWordExtend.DECREASEFACTOR = Double.valueOf(args[2]);
 //        PointWordExtend.DECREASEFACTOR = 0.5;
-//
+        //SVM分类阈值
+        ClasificationSVMPredict.classificationThreshold = Double.valueOf(args[3]);
+
 //        System.out.println("关系对总数 " + (DealOriginFile.DOCNUM));
 //        System.out.println("窗口长度 " + PureTF.WINDOWLENGTH);
 //        System.out.println("wordne近义词树深度 " + PointWordClosure.DEPTH);

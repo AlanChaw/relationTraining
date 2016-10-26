@@ -22,7 +22,12 @@ public class PointWordExtend implements Cloneable{
     //IWF
     private Double inverseWordFrequency;
     private Integer allAppearCount = 0;
-
+    //BDC
+    private Integer Ccompete = 0;
+    private Integer Ccooperate = 0;
+    private Double weight = 0.0;
+    private Integer appeared = 0;
+    private Double weightInEntity = 0.0;
 
     public PointWordExtend(PointWord pointWord){
         this.pointWord = pointWord;
@@ -96,6 +101,46 @@ public class PointWordExtend implements Cloneable{
 
     public Double getInverseWordFrequency() {
         return inverseWordFrequency;
+    }
+
+    public void setCcompete(Integer ccompete) {
+        Ccompete = ccompete;
+    }
+
+    public Integer getCcompete() {
+        return Ccompete;
+    }
+
+    public void setCcooperate(Integer ccooperate) {
+        Ccooperate = ccooperate;
+    }
+
+    public Integer getCcooperate() {
+        return Ccooperate;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setAppeared(Integer appeared) {
+        this.appeared = appeared;
+    }
+
+    public Integer getAppeared() {
+        return appeared;
+    }
+
+    public void setWeightInEntity(Double weightInEntity) {
+        this.weightInEntity = weightInEntity;
+    }
+
+    public Double getWeightInEntity() {
+        return weightInEntity;
     }
 
     @Override
